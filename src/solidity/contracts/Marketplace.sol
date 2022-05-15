@@ -71,7 +71,6 @@ contract Marketplace is ReentrancyGuard {
                 uint _feeGoldPercent,
                 uint _feeSilverPercent) {
         owner = msg.sender;
-        console.log('ADDRESS DEL CONTRATO DE MARKETPLACE: ', address(this));
         accountOwnerMarketplace = payable(_accountOwnerMarketplace);
         accountGamerOrganization = payable(_accountGamerOrganization);
         feeMarketplacePercent = _feeMarketplacePercent;
@@ -92,8 +91,6 @@ contract Marketplace is ReentrancyGuard {
 
             itemCount++;
 
-            // TODO: is it neccesary to do this?
-            //_nft.transferFrom(msg.sender, address(this), _tokensId[i]);
             _nft.transferFrom(msg.sender, accountOwnerMarketplace, _tokensId[i]);
 
             items[itemCount] = Item(
@@ -121,6 +118,7 @@ contract Marketplace is ReentrancyGuard {
         require(msg.sender == _nft.ownerOf(_tokenId));
         require(_price > 0, "Price must be greater than zero");
 
+        // TODO: Asignar el seller cuando se publica? o dejarlo como esta ahora, que es al mmoento del purchase, ahi queda raro
         //items[_tokenId].seller = payable(msg.sender);
         items[_tokenId].price = _price;
         items[_tokenId].onSale = true;
@@ -141,15 +139,12 @@ contract Marketplace is ReentrancyGuard {
         require(items[_itemId].onSale == true, "Item isn't on sale");
 
         if (itemCountOfPurchases[_itemId] == 0) {
-            console.log('ASIGNO UN DIAMOND: ', msg.sender);
             accountsLevels[_itemId].diamond = payable(msg.sender);
         }
         else if (itemCountOfPurchases[_itemId] == 1) {
-            console.log('ASIGNO UN GOLD');
             accountsLevels[_itemId].gold = payable(msg.sender);
         }
         else if (itemCountOfPurchases[_itemId] == 2) {
-            console.log('ASIGNO UN SILVER');
             accountsLevels[_itemId].silver = payable(msg.sender);
         }
 
@@ -158,10 +153,9 @@ contract Marketplace is ReentrancyGuard {
         address originalSeller = item.seller;
         
         // pay seller 
-        // console.log('[VER] SELLER: ', item.seller);
-        // console.log('[VER] OWNER: ', owner);
         item.seller.transfer(item.price);
         item.onSale = false;
+        itemCountOfPurchases[_itemId]++;
         
         // pay fees to organizations
         // TODO: Esto no se deberia a aplicar a la primera compra, ya que el seller es el marketplace
@@ -170,40 +164,21 @@ contract Marketplace is ReentrancyGuard {
 
         // pay fees to users
         if (itemCountOfPurchases[_itemId] == 3) { // pay to diamond account (diamond fee)
-            console.log('SE EJECUTO EL IF DEL DIAMOND');
             accountsLevels[_itemId].diamond.transfer(getFeePrice(feeDiamondPercent, item.price));
         }
         else if (itemCountOfPurchases[_itemId] == 4) { // pay to diamond and gold accounts (gold fee)
-            console.log('SE EJECUTO EL IF DEL GOLD');
             accountsLevels[_itemId].diamond.transfer(getFeePrice(feeGoldPercent, item.price));
             accountsLevels[_itemId].gold.transfer(getFeePrice(feeGoldPercent, item.price));
         }
         else if (itemCountOfPurchases[_itemId] == 5) { // pay to diamond, gold and silver accounts (silver fee)
-            console.log('SE EJECUTO EL IF DEL SILVER');
             accountsLevels[_itemId].diamond.transfer(getFeePrice(feeSilverPercent, item.price));
             accountsLevels[_itemId].gold.transfer(getFeePrice(feeSilverPercent, item.price));
             accountsLevels[_itemId].silver.transfer(getFeePrice(feeSilverPercent, item.price));
         }
 
-        itemCountOfPurchases[_itemId]++;
-
-        // transfer nft to buyer
-        console.log('[ANTES]address(this): ', address(this));
-        console.log('[ANTES]item.seller: ', item.seller);
-        console.log('[ANTES]msg.sender: ', msg.sender);
-        console.log('[ANTES]nft.ownerOf: ', item.nft.ownerOf(1));
-        
-        // if (item.nft.ownerOf(1) != accountOwnerMarketplace) {
-        //     item.nft.setApprovalForAll(address(this), true);
-        // }
         
         item.nft.transferFrom(item.seller, msg.sender, item.tokenId);
         item.seller = payable(msg.sender);
-        console.log('[DESPUES]address(this): ', address(this));
-        console.log('[DESPUES]item.seller: ', originalSeller);
-        console.log('[DESPUES]msg.sender: ', msg.sender);
-        console.log('[DESPUES]nft.ownerOf: ', item.nft.ownerOf(1));
-        //item.nft.transferFrom(address(this), msg.sender, item.tokenId);
 
         emit Bought(
             _itemId,
