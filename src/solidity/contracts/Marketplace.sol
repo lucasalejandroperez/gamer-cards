@@ -10,7 +10,7 @@ import "hardhat/console.sol";
 contract Marketplace is ReentrancyGuard {
     // State variables
     address owner;
-    address payable public immutable accountMarketplace;
+    address payable public immutable accountOwnerMarketplace;
     address payable public immutable accountGamerOrganization;
     uint public immutable feeMarketplacePercent;
     uint public immutable feeGamerOrganizationPercent;
@@ -63,7 +63,7 @@ contract Marketplace is ReentrancyGuard {
     );
 
     constructor(
-                address _accountMarketplace, 
+                address _accountOwnerMarketplace, 
                 address _accountGamerOrganization, 
                 uint _feeMarketplacePercent, 
                 uint _feeGamerOrganizationPercent, 
@@ -71,7 +71,8 @@ contract Marketplace is ReentrancyGuard {
                 uint _feeGoldPercent,
                 uint _feeSilverPercent) {
         owner = msg.sender;
-        accountMarketplace = payable(_accountMarketplace);
+        console.log('ADDRESS DEL CONTRATO DE MARKETPLACE: ', address(this));
+        accountOwnerMarketplace = payable(_accountOwnerMarketplace);
         accountGamerOrganization = payable(_accountGamerOrganization);
         feeMarketplacePercent = _feeMarketplacePercent;
         feeGamerOrganizationPercent = _feeGamerOrganizationPercent;
@@ -93,14 +94,14 @@ contract Marketplace is ReentrancyGuard {
 
             // TODO: is it neccesary to do this?
             //_nft.transferFrom(msg.sender, address(this), _tokensId[i]);
-            _nft.transferFrom(msg.sender, accountMarketplace, _tokensId[i]);
+            _nft.transferFrom(msg.sender, accountOwnerMarketplace, _tokensId[i]);
 
             items[itemCount] = Item(
                 itemCount,
                 _nft,
                 _tokensId[i],
                 _prices[i],
-                accountMarketplace,
+                accountOwnerMarketplace,
                 true
             );
             
@@ -111,7 +112,7 @@ contract Marketplace is ReentrancyGuard {
                 address(_nft),
                 _tokensId,
                 _prices,
-                accountMarketplace // TODO: Deberia de ser el accountMarketplace
+                accountOwnerMarketplace // TODO: Deberia de ser el accountMarketplace
         );
     }
 
@@ -120,6 +121,7 @@ contract Marketplace is ReentrancyGuard {
         require(msg.sender == _nft.ownerOf(_tokenId));
         require(_price > 0, "Price must be greater than zero");
 
+        //items[_tokenId].seller = payable(msg.sender);
         items[_tokenId].price = _price;
         items[_tokenId].onSale = true;
 
@@ -152,14 +154,18 @@ contract Marketplace is ReentrancyGuard {
         }
 
         Item storage item = items[_itemId];
+
+        address originalSeller = item.seller;
         
         // pay seller 
+        // console.log('[VER] SELLER: ', item.seller);
+        // console.log('[VER] OWNER: ', owner);
         item.seller.transfer(item.price);
         item.onSale = false;
         
         // pay fees to organizations
         // TODO: Esto no se deberia a aplicar a la primera compra, ya que el seller es el marketplace
-        accountMarketplace.transfer(getFeePrice(feeMarketplacePercent, item.price));
+        accountOwnerMarketplace.transfer(getFeePrice(feeMarketplacePercent, item.price));
         accountGamerOrganization.transfer(getFeePrice(feeGamerOrganizationPercent, item.price));
 
         // pay fees to users
@@ -182,11 +188,21 @@ contract Marketplace is ReentrancyGuard {
         itemCountOfPurchases[_itemId]++;
 
         // transfer nft to buyer
-        console.log('[VER]address(this): ', address(this));
-        console.log('[VER]item.seller: ', item.seller);
-        console.log('[VER]msg.sender: ', msg.sender);
-        console.log('[VER]nft.ownerOf: ', item.nft.ownerOf(1));
+        console.log('[ANTES]address(this): ', address(this));
+        console.log('[ANTES]item.seller: ', item.seller);
+        console.log('[ANTES]msg.sender: ', msg.sender);
+        console.log('[ANTES]nft.ownerOf: ', item.nft.ownerOf(1));
+        
+        // if (item.nft.ownerOf(1) != accountOwnerMarketplace) {
+        //     item.nft.setApprovalForAll(address(this), true);
+        // }
+        
         item.nft.transferFrom(item.seller, msg.sender, item.tokenId);
+        item.seller = payable(msg.sender);
+        console.log('[DESPUES]address(this): ', address(this));
+        console.log('[DESPUES]item.seller: ', originalSeller);
+        console.log('[DESPUES]msg.sender: ', msg.sender);
+        console.log('[DESPUES]nft.ownerOf: ', item.nft.ownerOf(1));
         //item.nft.transferFrom(address(this), msg.sender, item.tokenId);
 
         emit Bought(
@@ -194,7 +210,7 @@ contract Marketplace is ReentrancyGuard {
             address(item.nft),
             item.tokenId,
             item.price,
-            item.seller,
+            originalSeller,
             msg.sender
         );
     }
