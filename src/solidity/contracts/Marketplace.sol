@@ -26,6 +26,7 @@ contract Marketplace is ReentrancyGuard {
         uint tokenId;
         uint price;
         address payable seller;
+        bool onSale;
     }
 
     struct Level {
@@ -52,6 +53,13 @@ contract Marketplace is ReentrancyGuard {
         uint price,
         address indexed seller,
         address indexed buyer
+    );
+
+    event Published(
+        uint itemId,
+        uint tokenId,
+        uint price,
+        address indexed seller
     );
 
     constructor(
@@ -84,14 +92,16 @@ contract Marketplace is ReentrancyGuard {
             itemCount++;
 
             // TODO: is it neccesary to do this?
-            _nft.transferFrom(msg.sender, address(this), _tokensId[i]);
+            //_nft.transferFrom(msg.sender, address(this), _tokensId[i]);
+            _nft.transferFrom(msg.sender, accountMarketplace, _tokensId[i]);
 
             items[itemCount] = Item(
                 itemCount,
                 _nft,
                 _tokensId[i],
                 _prices[i],
-                accountMarketplace // TODO: Deberia de ser el accountMarketplace
+                accountMarketplace,
+                true
             );
             
         }
@@ -105,13 +115,20 @@ contract Marketplace is ReentrancyGuard {
         );
     }
 
-    // re-publish the item and put it avaiable to sell
+    // re-publish the item and put it avaiable to sell in the marketplace
     function publishItem(IERC721 _nft, uint _tokenId, uint _price) external nonReentrant {
+        require(msg.sender == _nft.ownerOf(_tokenId));
         require(_price > 0, "Price must be greater than zero");
 
-        // TODO: is it neccesary to do this?
-        //_nft.transferFrom(msg.sender, address(this), _tokenId);
+        items[_tokenId].price = _price;
+        items[_tokenId].onSale = true;
 
+        emit Published (
+            items[_tokenId].itemId,
+            _tokenId,
+            _price,
+            msg.sender
+        );
     }
 
     // TODO: Falta hacer que la misma persona dueña del token no sea la misma que lo compra
@@ -119,6 +136,7 @@ contract Marketplace is ReentrancyGuard {
         uint _totalPrice = getTotalPrice(_itemId);
         require(_itemId > 0 && _itemId <= itemCount, "item doesn't exist");
         require(msg.value >= _totalPrice, "not enough ether to cover item price and market fee");
+        require(items[_itemId].onSale == true, "Item isn't on sale");
 
         if (itemCountOfPurchases[_itemId] == 0) {
             console.log('ASIGNO UN DIAMOND: ', msg.sender);
@@ -137,6 +155,7 @@ contract Marketplace is ReentrancyGuard {
         
         // pay seller 
         item.seller.transfer(item.price);
+        item.onSale = false;
         
         // pay fees to organizations
         // TODO: Esto no se deberia a aplicar a la primera compra, ya que el seller es el marketplace
@@ -163,7 +182,12 @@ contract Marketplace is ReentrancyGuard {
         itemCountOfPurchases[_itemId]++;
 
         // transfer nft to buyer
-        item.nft.transferFrom(address(this), msg.sender, item.tokenId);
+        console.log('[VER]address(this): ', address(this));
+        console.log('[VER]item.seller: ', item.seller);
+        console.log('[VER]msg.sender: ', msg.sender);
+        console.log('[VER]nft.ownerOf: ', item.nft.ownerOf(1));
+        item.nft.transferFrom(item.seller, msg.sender, item.tokenId);
+        //item.nft.transferFrom(address(this), msg.sender, item.tokenId);
 
         emit Bought(
             _itemId,

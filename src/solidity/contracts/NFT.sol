@@ -3,6 +3,8 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
+import "hardhat/console.sol";
+
 contract NFT is ERC721URIStorage {
     uint public tokenId;
     
@@ -18,5 +20,14 @@ contract NFT is ERC721URIStorage {
             tokenIdsArray[i] = tokenId;
         }
         return(tokenIdsArray);
+    }
+
+    function giveResaleApproval(uint256 _tokenId, address _contractAddress) public { 
+        console.log('[NFT] OWNER OF NFT', ownerOf(_tokenId));
+        console.log('contractAddress: ', _contractAddress);
+        require( ownerOf(_tokenId) == msg.sender, "You must own this NFT in order to resell it" ); 
+        setApprovalForAll(_contractAddress, true); 
+        
+        return; 
     }
 }

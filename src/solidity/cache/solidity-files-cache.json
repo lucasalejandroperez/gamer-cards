@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Lucas\\React\\Projects\\gamer-cards\\src\\solidity\\contracts\\Marketplace.sol": {
-      "lastModificationDate": 1652555011231,
-      "contentHash": "01f0022e6077334857bc0f53af67aab7",
+      "lastModificationDate": 1652574463631,
+      "contentHash": "b8856075fbfa515ae5379a25c45f3ae6",
       "sourceName": "src/solidity/contracts/Marketplace.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -41,8 +41,8 @@
       ]
     },
     "C:\\Lucas\\React\\Projects\\gamer-cards\\src\\solidity\\contracts\\NFT.sol": {
-      "lastModificationDate": 1652304883785,
-      "contentHash": "aa5b76fa4e0e3f49719e0b75f91cb2ac",
+      "lastModificationDate": 1652634818455,
+      "contentHash": "5181a891bf540490cbef8cc2b618b964",
       "sourceName": "src/solidity/contracts/NFT.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -68,7 +68,8 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol"
+        "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol",
+        "hardhat/console.sol"
       ],
       "versionPragmas": [
         "^0.8.4"
