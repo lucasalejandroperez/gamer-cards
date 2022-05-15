@@ -123,7 +123,7 @@ contract Marketplace is ReentrancyGuard {
         require(msg.sender == _nft.ownerOf(_tokenId));
         require(_price > 0, "Price must be greater than zero");
 
-        // TODO: Asignar el seller cuando se publica? o dejarlo como esta ahora, que es al mmoento del purchase, ahi queda raro
+        // TODO: Asignar el seller cuando se publica? o dejarlo como esta ahora, que es al momento del purchase, ahi queda raro
         //items[_tokenId].seller = payable(msg.sender);
         items[_tokenId].price = _price;
         items[_tokenId].onSale = true;
