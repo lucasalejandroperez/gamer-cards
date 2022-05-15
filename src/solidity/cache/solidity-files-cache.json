@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Lucas\\React\\Projects\\gamer-cards\\src\\solidity\\contracts\\Marketplace.sol": {
-      "lastModificationDate": 1652657296363,
-      "contentHash": "37bf7765cd4b4b929371ec3e5dd35c50",
+      "lastModificationDate": 1652657592820,
+      "contentHash": "25b72c30fc465db1b84a8c2e7fc272d8",
       "sourceName": "src/solidity/contracts/Marketplace.sol",
       "solcConfig": {
         "version": "0.8.4",
