@@ -901,9 +901,6 @@ describe('Tests of NFT contract', () => {
         });
 
         it('Should revert transaction, same owner trying to buy his own nft', async () => {
-            const marketplaceInitialEthBal = await addr9.getBalance();
-            const gamerOrganizationInitialEthBal = await addr10.getBalance();
-
             const priceSecondPurchase = 1;
 
             // addr3 purchase item #1
