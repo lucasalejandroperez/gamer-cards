@@ -11,8 +11,6 @@ describe('Tests of NFT contract', () => {
 
     let Marketplace;
     let marketplace;
-    //let accountMarketplace = '0x14dc79964da2c08b23698b3d3cc7ca32193d9955'; // Account #7
-    //let accountGamerOrganization = '0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f'; // Account #8
     let feeMarketplacePercent = 1;
     let feeGamerOrganizationPercent = 1;
     let feeDiamondPercent = 3;
@@ -40,7 +38,7 @@ describe('Tests of NFT contract', () => {
         [deployer, addr1, addr2, addr3, addr4, addr5, addr6, addr7, addr8, addr9, addr10, ...addrs] = await ethers.getSigners();
 
         // To deploy our contracts
-        nft = await NFT.deploy();
+        nft = await NFT.deploy(addr9.address);
         marketplace = await Marketplace.deploy(addr9.address,
                                                 addr10.address,
                                                 feeMarketplacePercent,
@@ -105,7 +103,7 @@ describe('Tests of NFT contract', () => {
                         prices,
                         addr9.address
                     );
-            // TODO: Owner of NFT should now be the marketplace? le cambie a addr9
+
             expect(await nft.ownerOf(1)).to.equal(addr9.address);
             expect(await nft.ownerOf(2)).to.equal(addr9.address);
             expect(await nft.ownerOf(3)).to.equal(addr9.address);
@@ -175,10 +173,7 @@ describe('Tests of NFT contract', () => {
 
         it('Should pay seller and pay fees to marketplace and GamerOrganization, transfer NFT to buyer and emit Bought event', async () => {
             const marketplaceInitialEthBal = await addr9.getBalance();
-            // const buyerInitialEthBal = await addr3.getBalance();
             const gamerOrganizationInitialEthBal = await addr10.getBalance();
-
-            const totalPriceInWei = await marketplace.getTotalPrice(1);
 
             // addr3 purchase item #1
             await expect(marketplace.connect(addr3).purchaseItem(1, {value: ethers.utils.parseEther("1.02")}))
@@ -903,6 +898,38 @@ describe('Tests of NFT contract', () => {
                             );
 
             expect(await nft.ownerOf(1)).to.equal(addr8.address);
+        });
+
+        it('Should revert transaction, same owner trying to buy his own nft', async () => {
+            const marketplaceInitialEthBal = await addr9.getBalance();
+            const gamerOrganizationInitialEthBal = await addr10.getBalance();
+
+            const priceSecondPurchase = 1;
+
+            // addr3 purchase item #1
+            await expect(marketplace.connect(addr3).purchaseItem(1, {value: ethers.utils.parseEther("1.02")}))
+                    .to.emit(marketplace, "Bought")
+                    .withArgs(
+                        1,
+                        nft.address,
+                        1,
+                        prices[0],
+                        addr9.address,
+                        addr3.address
+                    );
+
+            await expect(marketplace.connect(addr3).publishItem(nft.address, 1, toWei(priceSecondPurchase.toString())))
+                    .to.emit(marketplace, "Published")
+                    .withArgs(
+                        1,
+                        1,
+                        toWei(priceSecondPurchase.toString()),
+                        addr3.address
+                    );
+
+            // addr3 purchase item #1
+            await expect(marketplace.connect(addr3).purchaseItem(1, {value: ethers.utils.parseEther("1.02")}))
+                    .to.be.revertedWith("Owners can't buy their own items");            
         });
         
       });

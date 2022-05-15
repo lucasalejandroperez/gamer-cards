@@ -62,6 +62,11 @@ contract Marketplace is ReentrancyGuard {
         address indexed seller
     );
 
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
     constructor(
                 address _accountOwnerMarketplace, 
                 address _accountGamerOrganization, 
@@ -70,7 +75,7 @@ contract Marketplace is ReentrancyGuard {
                 uint _feeDiamondPercent,
                 uint _feeGoldPercent,
                 uint _feeSilverPercent) {
-        owner = msg.sender;
+        owner = _accountOwnerMarketplace;
         accountOwnerMarketplace = payable(_accountOwnerMarketplace);
         accountGamerOrganization = payable(_accountGamerOrganization);
         feeMarketplacePercent = _feeMarketplacePercent;
@@ -82,7 +87,7 @@ contract Marketplace is ReentrancyGuard {
 
     // Make item to offer on the marketplace
     // Each position of the array in tokensId, must be at the same position in the other array (prices Array)
-    function makeItem(IERC721 _nft, uint[] memory _tokensId, uint[] memory _prices) external nonReentrant {
+    function makeItem(IERC721 _nft, uint[] memory _tokensId, uint[] memory _prices) external onlyOwner nonReentrant {
         require(_tokensId.length > 0, "There is no tokens to create");
         require(_tokensId.length == _prices.length, "Tokens and prices must have the same amount of elements");
 
@@ -109,7 +114,7 @@ contract Marketplace is ReentrancyGuard {
                 address(_nft),
                 _tokensId,
                 _prices,
-                accountOwnerMarketplace // TODO: Deberia de ser el accountMarketplace
+                accountOwnerMarketplace
         );
     }
 
@@ -131,12 +136,12 @@ contract Marketplace is ReentrancyGuard {
         );
     }
 
-    // TODO: Falta hacer que la misma persona dueña del token no sea la misma que lo compra
     function purchaseItem(uint _itemId) external payable nonReentrant {
         uint _totalPrice = getTotalPrice(_itemId);
         require(_itemId > 0 && _itemId <= itemCount, "item doesn't exist");
         require(msg.value >= _totalPrice, "not enough ether to cover item price and market fee");
         require(items[_itemId].onSale == true, "Item isn't on sale");
+        require(items[_itemId].seller != msg.sender, "Owners can't buy their own items");
 
         if (itemCountOfPurchases[_itemId] == 0) {
             accountsLevels[_itemId].diamond = payable(msg.sender);
@@ -158,7 +163,7 @@ contract Marketplace is ReentrancyGuard {
         itemCountOfPurchases[_itemId]++;
         
         // pay fees to organizations
-        // TODO: Esto no se deberia a aplicar a la primera compra, ya que el seller es el marketplace
+        // TODO: This is not neccesary in the first buy, it will be fixed in the second version
         accountOwnerMarketplace.transfer(getFeePrice(feeMarketplacePercent, item.price));
         accountGamerOrganization.transfer(getFeePrice(feeGamerOrganizationPercent, item.price));
 
@@ -194,7 +199,6 @@ contract Marketplace is ReentrancyGuard {
         return ((_percent * _price) / 100);
     }
 
-    // TODO: Deberia de ser internal?
     function getTotalPrice(uint _itemId) view public returns(uint) {
         uint256 numberOfPurchases = itemCountOfPurchases[_itemId];
         uint256 feeApplied =  feeGamerOrganizationPercent;
