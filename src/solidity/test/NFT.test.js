@@ -63,7 +63,7 @@ describe('Tests of NFT contract', () => {
      describe('Minting NFTs', () => { 
         it('Should track each minted NFT', async () => {
             // addr1 mints 3 NFTs
-            await nft.connect(addr9).mint(URIs, marketplace.address);
+            await nft.connect(addr9).mint(URIs);
 
             expect(await nft.tokenId()).to.equal(3);
             expect(await nft.tokenURI(1)).to.equal(URIs[0]);
@@ -72,7 +72,7 @@ describe('Tests of NFT contract', () => {
             expect(await nft.balanceOf(addr9.address)).to.equal(3); 
 
             // addr2 mints 3 NFTs
-            await nft.connect(addr9).mint(URIs, marketplace.address);
+            await nft.connect(addr9).mint(URIs);
 
             expect(await nft.tokenId()).to.equal(6);
             expect(await nft.tokenURI(4)).to.equal(URIs[0]);
@@ -87,7 +87,7 @@ describe('Tests of NFT contract', () => {
         let prices = [toWei(1), toWei(2), toWei(5)];
         beforeEach(async () => {
             // addr1 mints 3 NFTs
-            await nft.connect(addr9).mint(URIs, marketplace.address);
+            await nft.connect(addr9).mint(URIs);
 
             // addr1 approves marketplace to spend nft
             await nft.connect(addr9).setApprovalForAll(marketplace.address, true);
@@ -155,7 +155,7 @@ describe('Tests of NFT contract', () => {
         let prices = [ethers.utils.parseEther("1"), ethers.utils.parseEther("2"), ethers.utils.parseEther("5")];
         beforeEach(async () => {
             // deployer mints 3 NFTs
-            await nft.connect(addr9).mint(URIs, marketplace.address);
+            await nft.connect(addr9).mint(URIs);
 
             // deployer approves marketplace to spend tokens
             await nft.connect(addr9).setApprovalForAll(marketplace.address, true);

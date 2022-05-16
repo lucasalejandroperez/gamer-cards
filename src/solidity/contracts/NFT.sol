@@ -18,14 +18,13 @@ contract NFT is ERC721URIStorage {
         owner = _owner;
     }
     
-    function mint(string[] memory _tokenURIS, address _marketplaceContract) external onlyOwner returns(uint[] memory) {
+    function mint(string[] memory _tokenURIS) external onlyOwner returns(uint[] memory) {
         uint[] memory tokenIdsArray = new uint[](_tokenURIS.length);
         for (uint256 i = 0; i < _tokenURIS.length; i++) {
             tokenId++;
             _safeMint(msg.sender, tokenId);
             _setTokenURI(tokenId, _tokenURIS[i]);
             tokenIdsArray[i] = tokenId;
-            setApprovalForAll(_marketplaceContract, true);
         }
         return(tokenIdsArray);
     }
