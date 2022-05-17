@@ -1,13 +1,17 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './frontend/App';
+import { createRoot } from 'react-dom/client';
+import { Provider } from "react-redux"
+import { GamerCardsApp } from './frontend/GamerCardsApp';
+import { store } from './frontend/redux/store';
 import './frontend/index.css';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+const container = document.getElementById('root')!;
+const root = createRoot(container);
+
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <GamerCardsApp />
+    </Provider>
   </React.StrictMode>
 );
