@@ -7,6 +7,7 @@ export const Layout = () => {
             <Link to="/">Home</Link> | { " "}
             <Link to="/marketplace">Marketplace</Link> | { " "}
             <Link to="/about">About</Link> | { " "}
+            <button type="button">conectar metamask</button>
         </nav>
         <section>
             <Outlet />
