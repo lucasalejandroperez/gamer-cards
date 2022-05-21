@@ -3,6 +3,7 @@ import { About } from './pages/About';
 import { Home } from './pages/Home';
 import { Layout } from './pages/Layout';
 import { Marketplace } from './pages/Marketplace';
+import { Test } from './Test';
 
 export const GamerCardsApp = () => {
   return (

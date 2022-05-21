@@ -1,4 +1,5 @@
 export const Home = () => {
+  
   return (
     <div>
         <h1>Bienvenidos al Gamer Cards Marketplace</h1>
