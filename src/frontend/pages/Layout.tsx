@@ -12,7 +12,7 @@ export const Layout = () => {
   useEffect(() => {
     console.log('selected acccooount1: ');
   }, []);
-
+ 
 
   return (
     <main>
