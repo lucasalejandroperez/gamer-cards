@@ -7,15 +7,15 @@ import NFTAddress from '../../abis/NFT-address.json';
 import { RootState } from '../store';
 
 export interface Web3State {
-    nft: object;
-    marketplace: object;
+    nft: any;
+    marketplace: any;
     selectedAccount: string;
     status: 'idle' | 'loading' | 'failed';
   }
   
 const initialState: Web3State = {
-    nft: {},
-    marketplace: {},
+    nft: null,
+    marketplace: null,
     selectedAccount: '',
     status: 'idle',
 };
@@ -84,4 +84,7 @@ export const web3Slice = createSlice({
   });
 
   export default web3Slice.reducer;
+
   export const getSelectedAccount = (state: RootState) => state.web3.selectedAccount;
+  export const getMarketplaceContract = (state: RootState) => state.web3.marketplace;
+  export const getNftContract = (state: RootState) => state.web3.nft;

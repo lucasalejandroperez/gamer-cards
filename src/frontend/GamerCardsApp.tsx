@@ -3,7 +3,7 @@ import { About } from './pages/About';
 import { Home } from './pages/Home';
 import { Layout } from './pages/Layout';
 import { Marketplace } from './pages/Marketplace';
-import { Test } from './Test';
+import { Mint } from './pages/Mint';
 
 export const GamerCardsApp = () => {
   return (
@@ -12,6 +12,7 @@ export const GamerCardsApp = () => {
             <Route path="/" element={ <Layout /> }>
                 <Route index element={ <Home /> } />
                 <Route path="marketplace" element={ <Marketplace /> } />
+                <Route path="mint" element={ <Mint /> } />
                 <Route path="about" element={ <About /> } />
 
                 <Route path="*" element={ <Navigate replace to="/" /> } />
