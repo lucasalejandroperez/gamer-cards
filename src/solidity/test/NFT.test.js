@@ -37,7 +37,6 @@ describe('Tests of NFT contract', () => {
         NFT = await ethers.getContractFactory("NFT");
         Marketplace = await ethers.getContractFactory("Marketplace");
         [deployer, addr0, addr1, addr2, addr3, addr4, addr5, addr6, addr7, addr8, addr9, addr10, ...addrs] = await ethers.getSigners();
-        console.log('DEPLOYER ADDRESS: ', deployer.address);
         // To deploy our contracts
         nft = await NFT.deploy(deployer.address);
         marketplace = await Marketplace.deploy(deployer.address,
@@ -49,7 +48,7 @@ describe('Tests of NFT contract', () => {
                                                 feeSilverPercent);
     });
 
-    /*
+    
     describe('Deployment', () => { 
         it('Should track name and symbol of the NFT Collection', async () => { 
             // This test expects the owner variable stored in the contract to be equal
@@ -66,7 +65,6 @@ describe('Tests of NFT contract', () => {
         it('Should track each minted NFT', async () => {
             // addr1 mints 3 NFTs
             await nft.connect(deployer).mint(URIs);
-            console.log('tokenId: ', await nft.tokenCount());
 
             expect(await nft.tokenCount()).to.equal(3);
             expect(await nft.tokenURI(1)).to.equal(URIs[0]);
@@ -84,20 +82,20 @@ describe('Tests of NFT contract', () => {
             expect(await nft.balanceOf(deployer.address)).to.equal(6); 
         });     
     });
-    */
+    
 
     describe('Making marketplace Items', () => { 
         let tokenIds = [1, 2, 3];
         let prices = [toWei(1), toWei(2), toWei(5)];
         let nicks = ["TenZ", "TenZ", "TenZ"];
         let teams = ["Sentinels", "Sentinels", "Sentinels"];
-        beforeEach(async () => {
-            // // addr9 mints 3 NFTs
-            // await nft.connect(addr9).mint(URIs);
+        // beforeEach(async () => {
+        //     // // addr9 mints 3 NFTs
+        //     // await nft.connect(addr9).mint(URIs);
 
-            // // addr9 approves marketplace to spend nft
-            // await nft.connect(addr9).setApprovalForAll(marketplace.address, true);
-        });
+        //     // // addr9 approves marketplace to spend nft
+        //     //await nft.connect(deployer).setApprovalForAll(marketplace.address, true);
+        // });
 
         it('Should track newly created item, transfer NFT from seller to marketplace and emit Offered event', async () => {
             await expect(marketplace.connect(deployer).makeItem(nft.address, nft.address, URIs, prices, nicks, teams))
@@ -143,21 +141,21 @@ describe('Tests of NFT contract', () => {
             expect(item3.onSale).to.equal(true);
         });
 
-        // it('Should fail if price is set to zero', async () => {
-        //     let anotherPrices = [toWei(2), toWei(1), toWei(0)];
-        //     await expect(marketplace.connect(deployer).makeItem(nft.address, nft.address,URIs, anotherPrices, nicks, teams))
-        //                 .to.be.revertedWith("Price must be greater than zero");
-        // });
+        it('Should fail if price is set to zero', async () => {
+            let anotherPrices = [toWei(2), toWei(1), toWei(0)];
+            await expect(marketplace.connect(deployer).makeItem(nft.address, nft.address,URIs, anotherPrices, nicks, teams))
+                        .to.be.revertedWith("Price must be greater than zero");
+        });
 
-        // if('Should fail if prices elements differ from tokens', async () => {
-        //     let anotherPrices = [toWei(2), toWei(1)];
-        //     await expect(marketplace.connect(deployer).makeItem(nft.address, nft.address,URIs, anotherPrices, nicks, teams))
-        //                 .to.be.revertedWith("Tokens and prices must have the same amount of elements");
-        // });
+        if('Should fail if prices elements differ from tokens', async () => {
+            let anotherPrices = [toWei(2), toWei(1)];
+            await expect(marketplace.connect(deployer).makeItem(nft.address, nft.address,URIs, anotherPrices, nicks, teams))
+                        .to.be.revertedWith("Tokens and prices must have the same amount of elements");
+        });
      });
 
 
-     /*
+     
     describe('Purchasing marketplace items', () => { 
         let tokenIds = [1, 2, 3];
         let prices = [ethers.utils.parseEther("1"), ethers.utils.parseEther("2"), ethers.utils.parseEther("5")];
@@ -231,7 +229,7 @@ describe('Tests of NFT contract', () => {
                         nft.address,
                         1,
                         prices[0],
-                        addr.address,
+                        deployer.address,
                         addr3.address
                     );
 
@@ -940,5 +938,5 @@ describe('Tests of NFT contract', () => {
         });
         
       });
-      */
+    
  });
