@@ -27,11 +27,14 @@ export const setWeb3HandlerAsync = createAsyncThunk(
 
         const selectedAccount = await window.ethereum.selectedAddress;
         // Get provider from Metamask
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
         // Set signer
-        const signer = provider.getSigner()
+        const signer = provider.getSigner();
+        console.log('signer: ', signer);
+        
 
         window.ethereum.on('chainChanged', () => {
+            console.log('reloadddd');
             window.location.reload();
         });
 

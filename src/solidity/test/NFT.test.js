@@ -64,6 +64,7 @@ describe('Tests of NFT contract', () => {
         it('Should track each minted NFT', async () => {
             // addr1 mints 3 NFTs
             await nft.connect(addr9).mint(URIs);
+            console.log('tokenId: ', await nft.tokenId());
 
             expect(await nft.tokenId()).to.equal(3);
             expect(await nft.tokenURI(1)).to.equal(URIs[0]);
@@ -85,16 +86,18 @@ describe('Tests of NFT contract', () => {
     describe('Making marketplace Items', () => { 
         let tokenIds = [1, 2, 3];
         let prices = [toWei(1), toWei(2), toWei(5)];
+        let nicks = ["TenZ", "TenZ", "TenZ"];
+        let teams = ["Sentinels", "Sentinels", "Sentinels"];
         beforeEach(async () => {
-            // addr1 mints 3 NFTs
+            // addr9 mints 3 NFTs
             await nft.connect(addr9).mint(URIs);
 
-            // addr1 approves marketplace to spend nft
+            // addr9 approves marketplace to spend nft
             await nft.connect(addr9).setApprovalForAll(marketplace.address, true);
         });
 
         it('Should track newly created item, transfer NFT from seller to marketplace and emit Offered event', async () => {
-            await expect(marketplace.connect(addr9).makeItem(nft.address, tokenIds, prices))
+            await expect(marketplace.connect(addr9).makeItem(nft.address, tokenIds, prices, nicks, teams))
                     .to.emit(marketplace, "Offered")
                     .withArgs(
                         tokenIds.length,
@@ -139,13 +142,13 @@ describe('Tests of NFT contract', () => {
 
         it('Should fail if price is set to zero', async () => {
             let anotherPrices = [toWei(2), toWei(1), toWei(0)];
-            await expect(marketplace.connect(addr9).makeItem(nft.address, tokenIds, anotherPrices))
+            await expect(marketplace.connect(addr9).makeItem(nft.address, tokenIds, anotherPrices, nicks, teams))
                         .to.be.revertedWith("Price must be greater than zero");
         });
 
         if('Should fail if prices elements differ from tokens', async () => {
             let anotherPrices = [toWei(2), toWei(1)];
-            await expect(marketplace.connect(addr9).makeItem(nft.address, tokenIds, anotherPrices))
+            await expect(marketplace.connect(addr9).makeItem(nft.address, tokenIds, anotherPrices, nicks, teams))
                         .to.be.revertedWith("Tokens and prices must have the same amount of elements");
         });
      });
@@ -153,6 +156,8 @@ describe('Tests of NFT contract', () => {
     describe('Purchasing marketplace items', () => { 
         let tokenIds = [1, 2, 3];
         let prices = [ethers.utils.parseEther("1"), ethers.utils.parseEther("2"), ethers.utils.parseEther("5")];
+        let nicks = ["TenZ", "TenZ", "TenZ"];
+        let teams = ["Sentinels", "Sentinels", "Sentinels"];
         beforeEach(async () => {
             // deployer mints 3 NFTs
             await nft.connect(addr9).mint(URIs);
@@ -160,7 +165,7 @@ describe('Tests of NFT contract', () => {
             // deployer approves marketplace to spend tokens
             await nft.connect(addr9).setApprovalForAll(marketplace.address, true);
 
-            await expect(marketplace.connect(addr9).makeItem(nft.address, tokenIds, prices))
+            await expect(marketplace.connect(addr9).makeItem(nft.address, tokenIds, prices, nicks, teams))
                     .to.emit(marketplace, "Offered")
                     .withArgs(
                         tokenIds.length,

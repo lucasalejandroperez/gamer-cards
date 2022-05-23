@@ -25,6 +25,8 @@ contract Marketplace is ReentrancyGuard {
         IERC721 nft;
         uint tokenId;
         uint price;
+        string nick;
+        string team;
         address payable seller;
         bool onSale;
     }
@@ -87,12 +89,13 @@ contract Marketplace is ReentrancyGuard {
 
     // Make item to offer on the marketplace
     // Each position of the array in tokensId, must be at the same position in the other array (prices Array)
-    function makeItem(IERC721 _nft, uint[] memory _tokensId, uint[] memory _prices) external onlyOwner nonReentrant {
+    function makeItem(IERC721 _nft, uint[] memory _tokensId, uint[] memory _prices, string[] memory _nicks, string[] memory _teams) external onlyOwner nonReentrant {
         require(_tokensId.length > 0, "There is no tokens to create");
         require(_tokensId.length == _prices.length, "Tokens and prices must have the same amount of elements");
 
         for (uint256 i = 0; i < _tokensId.length; i++) {
             require(_prices[i] > 0, "Price must be greater than zero");
+            // TODO: Validar nick y team vacio
 
             itemCount++;
 
@@ -103,6 +106,8 @@ contract Marketplace is ReentrancyGuard {
                 _nft,
                 _tokensId[i],
                 _prices[i],
+                _nicks[i],
+                _teams[i],
                 accountOwnerMarketplace,
                 true
             );

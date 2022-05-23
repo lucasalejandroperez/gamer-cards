@@ -3,12 +3,15 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setItemList, getAllItems, setItemsAsync } from '../redux/slices/marketplaceSlice';
 import { setWeb3HandlerAsync } from '../redux/slices/web3Slice';
 import { ethers } from "ethers";
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 export const Marketplace = () => {
 
   // this is instead of `useSelector((state: RootState) => state.marketplace.value)`
   const items = useAppSelector(getAllItems);
   const dispatch = useAppDispatch();
+  const marketplaceContract = useSelector((state: RootState) => state.web3.marketplace);
 
   const prueba = async() => {
     // console.log('window1: ', window);
@@ -35,7 +38,9 @@ export const Marketplace = () => {
     // },
     // ]
     // dispatch(setItemList(items))
-    prueba();
+    //prueba();
+
+    dispatch(setItemsAsync())
     
   }, []);
 

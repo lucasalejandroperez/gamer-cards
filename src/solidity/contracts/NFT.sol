@@ -7,6 +7,7 @@ import "hardhat/console.sol";
 
 contract NFT is ERC721URIStorage {
     uint public tokenId;
+    uint[] public lastTokensMinted;
     address owner;
 
     modifier onlyOwner() {
@@ -26,6 +27,8 @@ contract NFT is ERC721URIStorage {
             _setTokenURI(tokenId, _tokenURIS[i]);
             tokenIdsArray[i] = tokenId;
         }
+
+        lastTokensMinted = tokenIdsArray;
         return(tokenIdsArray);
     }
 }

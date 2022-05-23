@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Lucas\\React\\Projects\\gamer-cards\\src\\solidity\\contracts\\Marketplace.sol": {
-      "lastModificationDate": 1652657630335,
-      "contentHash": "3299661da2a86fa3a902c2e8b0fa111f",
+      "lastModificationDate": 1653190486459,
+      "contentHash": "8423a65fe19d0eaa9a784f7101b46cc1",
       "sourceName": "src/solidity/contracts/Marketplace.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -41,8 +41,8 @@
       ]
     },
     "C:\\Lucas\\React\\Projects\\gamer-cards\\src\\solidity\\contracts\\NFT.sol": {
-      "lastModificationDate": 1652659668889,
-      "contentHash": "81f43a9781529a86a3cb1cd95afdf771",
+      "lastModificationDate": 1653226527343,
+      "contentHash": "7a115982b7bd6daf76ccec0c8539aa0b",
       "sourceName": "src/solidity/contracts/NFT.sol",
       "solcConfig": {
         "version": "0.8.4",
