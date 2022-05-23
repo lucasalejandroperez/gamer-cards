@@ -18,6 +18,7 @@ describe('Tests of NFT contract', () => {
     let feeSilverPercent = 1;
 
     let deployer;
+    let addr0;
     let addr1;
     let addr2;
     let addr3;
@@ -35,11 +36,11 @@ describe('Tests of NFT contract', () => {
         // Get the ContractFactories and Signers here.
         NFT = await ethers.getContractFactory("NFT");
         Marketplace = await ethers.getContractFactory("Marketplace");
-        [deployer, addr1, addr2, addr3, addr4, addr5, addr6, addr7, addr8, addr9, addr10, ...addrs] = await ethers.getSigners();
-
+        [deployer, addr0, addr1, addr2, addr3, addr4, addr5, addr6, addr7, addr8, addr9, addr10, ...addrs] = await ethers.getSigners();
+        console.log('DEPLOYER ADDRESS: ', deployer.address);
         // To deploy our contracts
-        nft = await NFT.deploy(addr9.address);
-        marketplace = await Marketplace.deploy(addr9.address,
+        nft = await NFT.deploy(deployer.address);
+        marketplace = await Marketplace.deploy(deployer.address,
                                                 addr10.address,
                                                 feeMarketplacePercent,
                                                 feeGamerOrganizationPercent,
@@ -48,6 +49,7 @@ describe('Tests of NFT contract', () => {
                                                 feeSilverPercent);
     });
 
+    /*
     describe('Deployment', () => { 
         it('Should track name and symbol of the NFT Collection', async () => { 
             // This test expects the owner variable stored in the contract to be equal
@@ -63,25 +65,26 @@ describe('Tests of NFT contract', () => {
      describe('Minting NFTs', () => { 
         it('Should track each minted NFT', async () => {
             // addr1 mints 3 NFTs
-            await nft.connect(addr9).mint(URIs);
-            console.log('tokenId: ', await nft.tokenId());
+            await nft.connect(deployer).mint(URIs);
+            console.log('tokenId: ', await nft.tokenCount());
 
-            expect(await nft.tokenId()).to.equal(3);
+            expect(await nft.tokenCount()).to.equal(3);
             expect(await nft.tokenURI(1)).to.equal(URIs[0]);
             expect(await nft.tokenURI(2)).to.equal(URIs[1]);
             expect(await nft.tokenURI(3)).to.equal(URIs[2]);
-            expect(await nft.balanceOf(addr9.address)).to.equal(3); 
+            expect(await nft.balanceOf(deployer.address)).to.equal(3); 
 
             // addr2 mints 3 NFTs
-            await nft.connect(addr9).mint(URIs);
+            await nft.connect(deployer).mint(URIs);
 
-            expect(await nft.tokenId()).to.equal(6);
+            expect(await nft.tokenCount()).to.equal(6);
             expect(await nft.tokenURI(4)).to.equal(URIs[0]);
             expect(await nft.tokenURI(5)).to.equal(URIs[1]);
             expect(await nft.tokenURI(6)).to.equal(URIs[2]);
-            expect(await nft.balanceOf(addr9.address)).to.equal(6); 
+            expect(await nft.balanceOf(deployer.address)).to.equal(6); 
         });     
     });
+    */
 
     describe('Making marketplace Items', () => { 
         let tokenIds = [1, 2, 3];
@@ -89,27 +92,27 @@ describe('Tests of NFT contract', () => {
         let nicks = ["TenZ", "TenZ", "TenZ"];
         let teams = ["Sentinels", "Sentinels", "Sentinels"];
         beforeEach(async () => {
-            // addr9 mints 3 NFTs
-            await nft.connect(addr9).mint(URIs);
+            // // addr9 mints 3 NFTs
+            // await nft.connect(addr9).mint(URIs);
 
-            // addr9 approves marketplace to spend nft
-            await nft.connect(addr9).setApprovalForAll(marketplace.address, true);
+            // // addr9 approves marketplace to spend nft
+            // await nft.connect(addr9).setApprovalForAll(marketplace.address, true);
         });
 
         it('Should track newly created item, transfer NFT from seller to marketplace and emit Offered event', async () => {
-            await expect(marketplace.connect(addr9).makeItem(nft.address, tokenIds, prices, nicks, teams))
+            await expect(marketplace.connect(deployer).makeItem(nft.address, nft.address, URIs, prices, nicks, teams))
                     .to.emit(marketplace, "Offered")
                     .withArgs(
                         tokenIds.length,
                         nft.address,
                         tokenIds,
                         prices,
-                        addr9.address
+                        deployer.address
                     );
 
-            expect(await nft.ownerOf(1)).to.equal(addr9.address);
-            expect(await nft.ownerOf(2)).to.equal(addr9.address);
-            expect(await nft.ownerOf(3)).to.equal(addr9.address);
+            expect(await nft.ownerOf(1)).to.equal(deployer.address);
+            expect(await nft.ownerOf(2)).to.equal(deployer.address);
+            expect(await nft.ownerOf(3)).to.equal(deployer.address);
             
             // Item count should now equal 1
             expect(await marketplace.itemCount()).to.equal(3);
@@ -140,44 +143,46 @@ describe('Tests of NFT contract', () => {
             expect(item3.onSale).to.equal(true);
         });
 
-        it('Should fail if price is set to zero', async () => {
-            let anotherPrices = [toWei(2), toWei(1), toWei(0)];
-            await expect(marketplace.connect(addr9).makeItem(nft.address, tokenIds, anotherPrices, nicks, teams))
-                        .to.be.revertedWith("Price must be greater than zero");
-        });
+        // it('Should fail if price is set to zero', async () => {
+        //     let anotherPrices = [toWei(2), toWei(1), toWei(0)];
+        //     await expect(marketplace.connect(deployer).makeItem(nft.address, nft.address,URIs, anotherPrices, nicks, teams))
+        //                 .to.be.revertedWith("Price must be greater than zero");
+        // });
 
-        if('Should fail if prices elements differ from tokens', async () => {
-            let anotherPrices = [toWei(2), toWei(1)];
-            await expect(marketplace.connect(addr9).makeItem(nft.address, tokenIds, anotherPrices, nicks, teams))
-                        .to.be.revertedWith("Tokens and prices must have the same amount of elements");
-        });
+        // if('Should fail if prices elements differ from tokens', async () => {
+        //     let anotherPrices = [toWei(2), toWei(1)];
+        //     await expect(marketplace.connect(deployer).makeItem(nft.address, nft.address,URIs, anotherPrices, nicks, teams))
+        //                 .to.be.revertedWith("Tokens and prices must have the same amount of elements");
+        // });
      });
 
+
+     /*
     describe('Purchasing marketplace items', () => { 
         let tokenIds = [1, 2, 3];
         let prices = [ethers.utils.parseEther("1"), ethers.utils.parseEther("2"), ethers.utils.parseEther("5")];
         let nicks = ["TenZ", "TenZ", "TenZ"];
         let teams = ["Sentinels", "Sentinels", "Sentinels"];
         beforeEach(async () => {
-            // deployer mints 3 NFTs
-            await nft.connect(addr9).mint(URIs);
+            // // deployer mints 3 NFTs
+            // await nft.connect(addr9).mint(URIs);
 
-            // deployer approves marketplace to spend tokens
-            await nft.connect(addr9).setApprovalForAll(marketplace.address, true);
+            // // deployer approves marketplace to spend tokens
+            // await nft.connect(addr9).setApprovalForAll(marketplace.address, true);
 
-            await expect(marketplace.connect(addr9).makeItem(nft.address, tokenIds, prices, nicks, teams))
+            await expect(marketplace.connect(deployer).makeItem(nft.address, nft.address,tokenIds, prices, nicks, teams))
                     .to.emit(marketplace, "Offered")
                     .withArgs(
                         tokenIds.length,
                         nft.address,
                         tokenIds,
                         prices,
-                        addr9.address
+                        deployer.address
                     );
         });
 
         it('Should pay seller and pay fees to marketplace and GamerOrganization, transfer NFT to buyer and emit Bought event', async () => {
-            const marketplaceInitialEthBal = await addr9.getBalance();
+            const marketplaceInitialEthBal = await deployer.getBalance();
             const gamerOrganizationInitialEthBal = await addr10.getBalance();
 
             // addr3 purchase item #1
@@ -188,11 +193,11 @@ describe('Tests of NFT contract', () => {
                         nft.address,
                         1,
                         prices[0],
-                        addr9.address,
+                        deployer.address,
                         addr3.address
                     );
             
-            const marketplaceFinalEthBal = await addr9.getBalance();
+            const marketplaceFinalEthBal = await deployer.getBalance();
            
             const gamerOrganizationFinalEthBal = await addr10.getBalance();
             
@@ -209,14 +214,14 @@ describe('Tests of NFT contract', () => {
         });
 
         it('Should pay seller, transfer NFT to buyer, pay double fee to marketplace and GamerOrganization', async () => {
-            const marketplaceInitialEthBal = await addr9.getBalance();
+            const marketplaceInitialEthBal = await deployer.getBalance();
             const gamerOrganizationInitialEthBal = await addr10.getBalance();
 
             const priceFirstPurchase = 1;
             const priceSecondPurchase = 1;
 
-            // addr3 approves marketplace contract to make the action
-            await nft.connect(addr3).setApprovalForAll(marketplace.address, true);
+            // // addr3 approves marketplace contract to make the action
+            // await nft.connect(addr3).setApprovalForAll(marketplace.address, true);
 
             // addr3 purchase item #1
             await expect(marketplace.connect(addr3).purchaseItem(1, {value: ethers.utils.parseEther("1.02")}))
@@ -226,7 +231,7 @@ describe('Tests of NFT contract', () => {
                         nft.address,
                         1,
                         prices[0],
-                        addr9.address,
+                        addr.address,
                         addr3.address
                     );
 
@@ -257,7 +262,7 @@ describe('Tests of NFT contract', () => {
                         addr4.address
                     );
             
-            const marketplaceFinalEthBal = await addr9.getBalance();
+            const marketplaceFinalEthBal = await deployer.getBalance();
             const gamerOrganizationFinalEthBal = await addr10.getBalance();
             const diamondBuyerFinalEthBal = await addr3.getBalance();
 
@@ -277,15 +282,15 @@ describe('Tests of NFT contract', () => {
         });
 
         it('Should pay seller, transfer NFT to buyer, pay triple fee to marketplace and GamerOrganization and one fee to diamond buyer and emit Bought event', async () => {
-            const marketplaceInitialEthBal = await addr9.getBalance();
+            const marketplaceInitialEthBal = await deployer.getBalance();
             const gamerOrganizationInitialEthBal = await addr10.getBalance();
 
             const priceFirstPurchase = 1;
             const priceSecondPurchase = 1;
             const priceThirdPurchase = 1;
 
-            // addr3 approves marketplace contract to make the action
-            await nft.connect(addr3).setApprovalForAll(marketplace.address, true);
+            // // addr3 approves marketplace contract to make the action
+            // await nft.connect(addr3).setApprovalForAll(marketplace.address, true);
 
             // addr3 purchase item #1
             await expect(marketplace.connect(addr3).purchaseItem(1, {value: ethers.utils.parseEther("1.02")}))
@@ -295,7 +300,7 @@ describe('Tests of NFT contract', () => {
                         nft.address,
                         1,
                         prices[0],
-                        addr9.address,
+                        deployer.address,
                         addr3.address
                     );
 
@@ -315,8 +320,8 @@ describe('Tests of NFT contract', () => {
             const diamondBuyerInitialEthBal = await addr3.getBalance();
             
             
-            // addr4 approves marketplace contract to make the action
-            await nft.connect(addr4).setApprovalForAll(marketplace.address, true);
+            // // addr4 approves marketplace contract to make the action
+            // await nft.connect(addr4).setApprovalForAll(marketplace.address, true);
 
             // addr4 purchase item #1
             await expect(marketplace.connect(addr4).purchaseItem(1, {value: ethers.utils.parseEther("1.02")}))
@@ -341,8 +346,8 @@ describe('Tests of NFT contract', () => {
 
             const goldBuyerInitialEthBal = await addr4.getBalance();
             
-            // addr5 approves marketplace contract to make the action
-            await nft.connect(addr5).setApprovalForAll(marketplace.address, true);
+            // // addr5 approves marketplace contract to make the action
+            // await nft.connect(addr5).setApprovalForAll(marketplace.address, true);
 
             // addr5 purchase item #1
             await expect(marketplace.connect(addr5).purchaseItem(1, {value: ethers.utils.parseEther("1.05")}))
@@ -356,7 +361,7 @@ describe('Tests of NFT contract', () => {
                         addr5.address
                     );
             
-            const marketplaceFinalEthBal = await addr9.getBalance();
+            const marketplaceFinalEthBal = await deployer.getBalance();
             const gamerOrganizationFinalEthBal = await addr10.getBalance();
             const diamondBuyerFinalEthBal = await addr3.getBalance();
             const goldBuyerFinalEthBal = await addr4.getBalance();
@@ -384,7 +389,7 @@ describe('Tests of NFT contract', () => {
         });
 
         it('Should pay seller, transfer NFT to buyer, pay four fee to marketplace and GamerOrganization and one fee to diamond and gold buyers and emit Bought event', async () => {
-            const marketplaceInitialEthBal = await addr9.getBalance();
+            const marketplaceInitialEthBal = await deployer.getBalance();
             const gamerOrganizationInitialEthBal = await addr10.getBalance();
 
             const priceFirstPurchase = 1;
@@ -392,8 +397,8 @@ describe('Tests of NFT contract', () => {
             const priceThirdPurchase = 1;
             const priceFourPurchase = 1;
 
-            // addr3 approves marketplace contract to make the action
-            await nft.connect(addr3).setApprovalForAll(marketplace.address, true);
+            // // addr3 approves marketplace contract to make the action
+            // await nft.connect(addr3).setApprovalForAll(marketplace.address, true);
 
             // addr3 purchase item #1
             await expect(marketplace.connect(addr3).purchaseItem(1, {value: ethers.utils.parseEther("1.02")}))
@@ -403,7 +408,7 @@ describe('Tests of NFT contract', () => {
                         nft.address,
                         1,
                         prices[0],
-                        addr9.address,
+                        deployer.address,
                         addr3.address
                     );
 
@@ -423,8 +428,8 @@ describe('Tests of NFT contract', () => {
             const diamondBuyerInitialEthBal = await addr3.getBalance();
             
             
-            // addr4 approves marketplace contract to make the action
-            await nft.connect(addr4).setApprovalForAll(marketplace.address, true);
+            // // addr4 approves marketplace contract to make the action
+            // await nft.connect(addr4).setApprovalForAll(marketplace.address, true);
 
             // addr4 purchase item #1
             await expect(marketplace.connect(addr4).purchaseItem(1, {value: ethers.utils.parseEther("1.02")}))
@@ -449,8 +454,8 @@ describe('Tests of NFT contract', () => {
 
             const goldBuyerInitialEthBal = await addr4.getBalance();
             
-            // addr5 approves marketplace contract to make the action
-            await nft.connect(addr5).setApprovalForAll(marketplace.address, true);
+            // // addr5 approves marketplace contract to make the action
+            // await nft.connect(addr5).setApprovalForAll(marketplace.address, true);
 
             // addr5 purchase item #1
             await expect(marketplace.connect(addr5).purchaseItem(1, {value: ethers.utils.parseEther("1.05")}))
@@ -475,8 +480,8 @@ describe('Tests of NFT contract', () => {
 
             const silverBuyerInitialEthBal = await addr5.getBalance();
 
-            // addr6 approves marketplace contract to make the action
-            await nft.connect(addr6).setApprovalForAll(marketplace.address, true);
+            // // addr6 approves marketplace contract to make the action
+            // await nft.connect(addr6).setApprovalForAll(marketplace.address, true);
 
             // addr6 purchase item #1
             await expect(marketplace.connect(addr6).purchaseItem(1, {value: ethers.utils.parseEther("1.06")}))
@@ -490,7 +495,7 @@ describe('Tests of NFT contract', () => {
                         addr6.address
                     );
             
-            const marketplaceFinalEthBal = await addr9.getBalance();
+            const marketplaceFinalEthBal = await deployer.getBalance();
             const gamerOrganizationFinalEthBal = await addr10.getBalance();
             const diamondBuyerFinalEthBal = await addr3.getBalance();
             const goldBuyerFinalEthBal = await addr4.getBalance();
@@ -529,7 +534,7 @@ describe('Tests of NFT contract', () => {
         });
 
         it('Should pay seller, transfer NFT to buyer, pay five fee to marketplace and GamerOrganization and one fee to diamond, gold and silver buyers and emit Bought event', async () => {
-            const marketplaceInitialEthBal = await addr9.getBalance();
+            const marketplaceInitialEthBal = await deployer.getBalance();
             const gamerOrganizationInitialEthBal = await addr10.getBalance();
 
             const priceFirstPurchase = 1;
@@ -538,8 +543,8 @@ describe('Tests of NFT contract', () => {
             const priceFourPurchase = 1;
             const priceFivePurchase = 1;
 
-            // addr3 approves marketplace contract to make the action
-            await nft.connect(addr3).setApprovalForAll(marketplace.address, true);
+            // // addr3 approves marketplace contract to make the action
+            // await nft.connect(addr3).setApprovalForAll(marketplace.address, true);
 
             // addr3 purchase item #1
             await expect(marketplace.connect(addr3).purchaseItem(1, {value: ethers.utils.parseEther("1.02")}))
@@ -549,7 +554,7 @@ describe('Tests of NFT contract', () => {
                         nft.address,
                         1,
                         prices[0],
-                        addr9.address,
+                        deployer.address,
                         addr3.address
                     );
 
@@ -569,8 +574,8 @@ describe('Tests of NFT contract', () => {
             const diamondBuyerInitialEthBal = await addr3.getBalance();
             
             
-            // addr4 approves marketplace contract to make the action
-            await nft.connect(addr4).setApprovalForAll(marketplace.address, true);
+            // // addr4 approves marketplace contract to make the action
+            // await nft.connect(addr4).setApprovalForAll(marketplace.address, true);
 
             // addr4 purchase item #1
             await expect(marketplace.connect(addr4).purchaseItem(1, {value: ethers.utils.parseEther("1.02")}))
@@ -595,8 +600,8 @@ describe('Tests of NFT contract', () => {
 
             const goldBuyerInitialEthBal = await addr4.getBalance();
             
-            // addr5 approves marketplace contract to make the action
-            await nft.connect(addr5).setApprovalForAll(marketplace.address, true);
+            // // addr5 approves marketplace contract to make the action
+            // await nft.connect(addr5).setApprovalForAll(marketplace.address, true);
 
             // addr5 purchase item #1
             await expect(marketplace.connect(addr5).purchaseItem(1, {value: ethers.utils.parseEther("1.05")}))
@@ -621,8 +626,8 @@ describe('Tests of NFT contract', () => {
 
             const silverBuyerInitialEthBal = await addr5.getBalance();
 
-            // addr6 approves marketplace contract to make the action
-            await nft.connect(addr6).setApprovalForAll(marketplace.address, true);
+            // // addr6 approves marketplace contract to make the action
+            // await nft.connect(addr6).setApprovalForAll(marketplace.address, true);
 
             // addr6 purchase item #1
             await expect(marketplace.connect(addr6).purchaseItem(1, {value: ethers.utils.parseEther("1.06")}))
@@ -645,8 +650,8 @@ describe('Tests of NFT contract', () => {
                         addr6.address
                     );
 
-            // addr7 approves marketplace contract to make the action
-            await nft.connect(addr7).setApprovalForAll(marketplace.address, true);
+            // // addr7 approves marketplace contract to make the action
+            // await nft.connect(addr7).setApprovalForAll(marketplace.address, true);
 
             // addr7 purchase item #1
             await expect(marketplace.connect(addr7).purchaseItem(1, {value: ethers.utils.parseEther("1.07")}))
@@ -660,7 +665,7 @@ describe('Tests of NFT contract', () => {
                         addr7.address
                     );
             
-            const marketplaceFinalEthBal = await addr9.getBalance();
+            const marketplaceFinalEthBal = await deployer.getBalance();
             const gamerOrganizationFinalEthBal = await addr10.getBalance();
             const diamondBuyerFinalEthBal = await addr3.getBalance();
             const goldBuyerFinalEthBal = await addr4.getBalance();
@@ -704,7 +709,7 @@ describe('Tests of NFT contract', () => {
         });
 
         it('Should pay seller, transfer NFT to buyer, pay five fee to marketplace and GamerOrganization and fees to diamond, gold and silver buyers', async () => {
-            const marketplaceInitialEthBal = await addr9.getBalance();
+            const marketplaceInitialEthBal = await deployer.getBalance();
             const gamerOrganizationInitialEthBal = await addr10.getBalance();
 
             const priceFirstPurchase = 1;
@@ -714,8 +719,8 @@ describe('Tests of NFT contract', () => {
             const priceFivePurchase = 1;
             const priceSixPurchase = 1;
 
-            // addr3 approves marketplace contract to make the action
-            await nft.connect(addr3).setApprovalForAll(marketplace.address, true);
+            // // addr3 approves marketplace contract to make the action
+            // await nft.connect(addr3).setApprovalForAll(marketplace.address, true);
 
             // addr3 purchase item #1
             await expect(marketplace.connect(addr3).purchaseItem(1, {value: ethers.utils.parseEther("1.02")}))
@@ -725,7 +730,7 @@ describe('Tests of NFT contract', () => {
                         nft.address,
                         1,
                         prices[0],
-                        addr9.address,
+                        deployer.address,
                         addr3.address
                     );
 
@@ -745,8 +750,8 @@ describe('Tests of NFT contract', () => {
             const diamondBuyerInitialEthBal = await addr3.getBalance();
             
             
-            // addr4 approves marketplace contract to make the action
-            await nft.connect(addr4).setApprovalForAll(marketplace.address, true);
+            // // addr4 approves marketplace contract to make the action
+            // await nft.connect(addr4).setApprovalForAll(marketplace.address, true);
 
             // addr4 purchase item #1
             await expect(marketplace.connect(addr4).purchaseItem(1, {value: ethers.utils.parseEther("1.02")}))
@@ -771,8 +776,8 @@ describe('Tests of NFT contract', () => {
 
             const goldBuyerInitialEthBal = await addr4.getBalance();
             
-            // addr5 approves marketplace contract to make the action
-            await nft.connect(addr5).setApprovalForAll(marketplace.address, true);
+            // // addr5 approves marketplace contract to make the action
+            // await nft.connect(addr5).setApprovalForAll(marketplace.address, true);
 
             // addr5 purchase item #1
             await expect(marketplace.connect(addr5).purchaseItem(1, {value: ethers.utils.parseEther("1.05")}))
@@ -797,8 +802,8 @@ describe('Tests of NFT contract', () => {
 
             const silverBuyerInitialEthBal = await addr5.getBalance();
 
-            // addr6 approves marketplace contract to make the action
-            await nft.connect(addr6).setApprovalForAll(marketplace.address, true);
+            // // addr6 approves marketplace contract to make the action
+            // await nft.connect(addr6).setApprovalForAll(marketplace.address, true);
 
             // addr6 purchase item #1
             await expect(marketplace.connect(addr6).purchaseItem(1, {value: ethers.utils.parseEther("1.06")}))
@@ -821,8 +826,8 @@ describe('Tests of NFT contract', () => {
                         addr6.address
                     );
 
-            // addr7 approves marketplace contract to make the action
-            await nft.connect(addr7).setApprovalForAll(marketplace.address, true);
+            // // addr7 approves marketplace contract to make the action
+            // await nft.connect(addr7).setApprovalForAll(marketplace.address, true);
 
             // addr7 purchase item #1
             await expect(marketplace.connect(addr7).purchaseItem(1, {value: ethers.utils.parseEther("1.07")}))
@@ -845,8 +850,8 @@ describe('Tests of NFT contract', () => {
                         addr7.address
                     );
 
-            // addr8 approves marketplace contract to make the action
-            await nft.connect(addr8).setApprovalForAll(marketplace.address, true);
+            // // addr8 approves marketplace contract to make the action
+            // await nft.connect(addr8).setApprovalForAll(marketplace.address, true);
 
             // addr8 purchase item #1
             await expect(marketplace.connect(addr8).purchaseItem(1, {value: ethers.utils.parseEther("1.08")}))
@@ -860,7 +865,7 @@ describe('Tests of NFT contract', () => {
                         addr8.address
                     );
 
-            const marketplaceFinalEthBal = await addr9.getBalance();
+            const marketplaceFinalEthBal = await deployer.getBalance();
             const gamerOrganizationFinalEthBal = await addr10.getBalance();
             const diamondBuyerFinalEthBal = await addr3.getBalance();
             const goldBuyerFinalEthBal = await addr4.getBalance();
@@ -916,7 +921,7 @@ describe('Tests of NFT contract', () => {
                         nft.address,
                         1,
                         prices[0],
-                        addr9.address,
+                        deployer.address,
                         addr3.address
                     );
 
@@ -935,5 +940,5 @@ describe('Tests of NFT contract', () => {
         });
         
       });
-
+      */
  });

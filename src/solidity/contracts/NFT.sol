@@ -6,8 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "hardhat/console.sol";
 
 contract NFT is ERC721URIStorage {
-    uint public tokenId;
-    uint[] public lastTokensMinted;
+    uint public tokenCount;
     address owner;
 
     modifier onlyOwner() {
@@ -19,16 +18,19 @@ contract NFT is ERC721URIStorage {
         owner = _owner;
     }
     
-    function mint(string[] memory _tokenURIS) external onlyOwner returns(uint[] memory) {
+    function mint(string[] memory _tokenURIS) external returns(uint[] memory) {
+        console.log('EEEEENTRO AL MINT');
+        console.log('_tokenURIS.length: ', _tokenURIS.length);
         uint[] memory tokenIdsArray = new uint[](_tokenURIS.length);
         for (uint256 i = 0; i < _tokenURIS.length; i++) {
-            tokenId++;
-            _safeMint(msg.sender, tokenId);
-            _setTokenURI(tokenId, _tokenURIS[i]);
-            tokenIdsArray[i] = tokenId;
+            console.log('ENTRO AL FOOOOOR');
+            console.log('msg.sender en el NFT: ', msg.sender);
+            tokenCount++;
+            _safeMint(msg.sender, tokenCount);
+            _setTokenURI(tokenCount, _tokenURIS[i]);
+            tokenIdsArray[i] = tokenCount;
         }
 
-        lastTokensMinted = tokenIdsArray;
         return(tokenIdsArray);
     }
 }

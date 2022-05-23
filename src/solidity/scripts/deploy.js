@@ -1,5 +1,5 @@
 async function main() {
-    const [deployer, addr1, addr2, addr3, addr4, addr5, addr6, addr7, addr8, addr9, addr10] = await ethers.getSigners();
+    const [deployer, addr0, addr1, addr2, addr3, addr4, addr5, addr6, addr7, addr8, addr9, addr10] = await ethers.getSigners();
   
     console.log("Deploying contracts with the account:", deployer.address);
     console.log("Account balance:", (await deployer.getBalance()).toString());
@@ -9,7 +9,7 @@ async function main() {
     const Marketplace = await ethers.getContractFactory("Marketplace");
     // deploy contracts
     const marketplace = await Marketplace.deploy(
-      addr9.address, 
+      deployer.address, 
       addr10.address, 
       1,
       1,
@@ -18,7 +18,7 @@ async function main() {
       1
     );
     const nft = await NFT.deploy(
-      addr9.address 
+      deployer.address 
     );
     // Save copies of each contracts abi and address to the frontend.
     saveFrontendFiles(marketplace , "Marketplace");

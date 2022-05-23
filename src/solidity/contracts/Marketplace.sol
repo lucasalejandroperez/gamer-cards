@@ -2,6 +2,8 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+// import "./IERC721Mint.sol";
+import "./NFT.sol";
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
@@ -89,16 +91,31 @@ contract Marketplace is ReentrancyGuard {
 
     // Make item to offer on the marketplace
     // Each position of the array in tokensId, must be at the same position in the other array (prices Array)
-    function makeItem(IERC721 _nft, uint[] memory _tokensId, uint[] memory _prices, string[] memory _nicks, string[] memory _teams) external onlyOwner nonReentrant {
-        require(_tokensId.length > 0, "There is no tokens to create");
-        require(_tokensId.length == _prices.length, "Tokens and prices must have the same amount of elements");
+    function makeItem(IERC721 _nft, address _nftAddress, string[] memory _tokenURIS, uint[] memory _prices, string[] memory _nicks, string[] memory _teams) external onlyOwner nonReentrant {
+        require(_tokenURIS.length > 0, "there is no tokens Uris to create");
+        //(bool success, bytes memory data) = _nftAddress.delegatecall(abi.encodeWithSignature("mint(string[])", _tokenURIS));
+        (bool success, bytes memory data) = _nftAddress.delegatecall(abi.encodeWithSelector(NFT.mint.selector, _tokenURIS));
+        require(success, "delegatecall to NFT Contract failed");
+        (uint[] memory _tokensId) = abi.decode(data, (uint[]));
+        
+        //uint[] memory _tokensId = _nft.mint(_tokenURIS);
+        console.log('_tokensId.length: ', _tokensId.length);
+        console.log('_tokensId[0]: ', _tokensId[0]);
+        console.log('_tokensId[1]: ', _tokensId[1]);
+        console.log('_tokensId[2]: ', _tokensId[2]);
 
         for (uint256 i = 0; i < _tokensId.length; i++) {
             require(_prices[i] > 0, "Price must be greater than zero");
+            console.log('_tokensId: ', _tokensId[i]);
             // TODO: Validar nick y team vacio
 
             itemCount++;
 
+            //(bool successTransferFrom, bytes memory dataTransferFrom) = address(_nft).delegatecall(abi.encodeWithSignature("transferFrom(address, address, uint256)", msg.sender, accountOwnerMarketplace, _tokensId[i]));
+                //(bool successTransferFrom, bytes memory dataTransferFrom) = address(_nft).delegatecall(abi.encodeWithSelector(ERC721.transferFrom.selector, msg.sender, accountOwnerMarketplace, _tokensId[i]));
+                //require(successTransferFrom, "delegatecall to NFT Contract transferFrom failed");
+            //(uint[] memory _tokensId) = abi.decode(data, (uint[]));
+            console.log('msg.sender en MARKETPLACE: ', msg.sender);
             _nft.transferFrom(msg.sender, accountOwnerMarketplace, _tokensId[i]);
 
             items[itemCount] = Item(

@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Lucas\\React\\Projects\\gamer-cards\\src\\solidity\\contracts\\Marketplace.sol": {
-      "lastModificationDate": 1653190486459,
-      "contentHash": "8423a65fe19d0eaa9a784f7101b46cc1",
+      "lastModificationDate": 1653334536132,
+      "contentHash": "833fcd3118166a2ee469f0604b9ce48b",
       "sourceName": "src/solidity/contracts/Marketplace.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -30,6 +30,7 @@
       },
       "imports": [
         "@openzeppelin/contracts/token/ERC721/IERC721.sol",
+        "./NFT.sol",
         "@openzeppelin/contracts/security/ReentrancyGuard.sol",
         "hardhat/console.sol"
       ],
@@ -41,8 +42,8 @@
       ]
     },
     "C:\\Lucas\\React\\Projects\\gamer-cards\\src\\solidity\\contracts\\NFT.sol": {
-      "lastModificationDate": 1653226527343,
-      "contentHash": "7a115982b7bd6daf76ccec0c8539aa0b",
+      "lastModificationDate": 1653276795355,
+      "contentHash": "5b4825c5128ef07ab3b3572eac36a464",
       "sourceName": "src/solidity/contracts/NFT.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -512,6 +513,43 @@
       ],
       "artifacts": [
         "console"
+      ]
+    },
+    "C:\\Lucas\\React\\Projects\\gamer-cards\\src\\solidity\\contracts\\IERC721Mint.sol": {
+      "lastModificationDate": 1653271084420,
+      "contentHash": "29eb21d6e959857fcd904d254650f531",
+      "sourceName": "src/solidity/contracts/IERC721Mint.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC721/IERC721.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC721Mint"
       ]
     }
   }
