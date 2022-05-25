@@ -5,57 +5,44 @@ import { setWeb3HandlerAsync } from '../redux/slices/web3Slice';
 import { ethers } from "ethers";
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import { NFTItem } from '../components/NFTItem';
 
 export const Marketplace = () => {
 
   // this is instead of `useSelector((state: RootState) => state.marketplace.value)`
   const items = useAppSelector(getAllItems);
   const dispatch = useAppDispatch();
+  const nftContract = useSelector((state: RootState) => state.web3.nft);
   const marketplaceContract = useSelector((state: RootState) => state.web3.marketplace);
 
   const prueba = async() => {
-    // console.log('window1: ', window);
-    
-    // const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    // console.log('accounts: ', accounts);
-    // console.log('accounts[0]: ', accounts[0]);
-    // const selectedAddress = window.ethereum.selectedAddress; 
-    // console.log('selected address: ', selectedAddress);
+    const itemCount = await marketplaceContract.itemCount();
+    console.log('itemCount: ', itemCount.toString());
   }
 
   useEffect(() => {
-    // const items = [{
-    //   itemId: 1,
-    //   name: 'Keznit'
-    // },
-    // {
-    //   itemId: 2,
-    //   name: 'm1xwell'
-    // },
-    // {
-    //   itemId: 3,
-    //   name: 'TenZ'
-    // },
-    // ]
-    // dispatch(setItemList(items))
-    //prueba();
-
-    dispatch(setItemsAsync())
-    
+    //dispatch(setItemsAsync({marketplaceContract, nftContract}))
   }, []);
 
- 
-  
-  
-  
   return (
     <>
         <h1>Listado de NFTs</h1>        
-        <button type='button' onClick={ () => dispatch(setItemsAsync()) }>Cargar Items async</button>
+        <button type='button' onClick={ () => dispatch(setItemsAsync({marketplaceContract, nftContract})) }>Cargar Items async</button>
+        <button type='button' onClick={ () => prueba() }>Prueba</button>
         <hr />
         {
           items.map((item) => (
-            <div>{item.name}</div>
+            <NFTItem 
+              key={item.itemId}
+              itemId={item.itemId}
+              nick={item.nick}
+              team={item.team}
+              description={item.description}
+              seller={item.seller}
+              totalPrice={item.totalPrice}
+              level={item.level}
+              image={item.image}
+            />
           ))
         }
     </>

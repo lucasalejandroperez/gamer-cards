@@ -2,12 +2,23 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import mintTeamsJson from '../mock/mintTeams.json';
 import { getSelectedAccount } from '../redux/slices/web3Slice';
-import {ethers} from 'ethers'
+import { ethers } from 'ethers';
+import { create as ipfsHttpClient } from 'ipfs-http-client';
+//import { create, urlSource  } from 'ipfs-http-client';
+import { useEffect } from 'react';
+import MarketplaceAddress from '../abis//Marketplace-address.json';
+import NFTAddress from '../abis/NFT-address.json';
+import MarketplaceAbi from '../abis/Marketplace.json';
+import NFTAbi from '../abis/NFT.json';
 
-
+const options = {
+    host: 'https://ipfs.infura.io:5001/api/v0'
+}
+//const client = ipfsHttpClient(options);
+// connect using a URL
+const client = ipfsHttpClient({ url: 'https://ipfs.infura.io:5001/api/v0'});
 
 export const Mint = () => {
-
     
     // TODO: Pasarlo a utils
     const toWei = (num:number) => ethers.utils.parseEther(num.toString());
@@ -19,38 +30,55 @@ export const Mint = () => {
 
     const handleOnClick = async() => {
         try {
-            console.log('nftContract: ', nftContract);
-            
             let uris = [];
-            let nicks = [];
-            let teams = [];
             let prices = [];
-            for (const element of mintTeamsJson) {
-                uris.push(element.image);
-                nicks.push(element.nick);
-                teams.push(element.team);
-                prices.push(toWei(element.price));
+
+            for (const {image, nick, team, price, description} of mintTeamsJson) {
+                //const imagePath = `https://ipfs.infura.io/ipfs/${image}`;
+                const result = await client.add(JSON.stringify({image, nick, team, price, description}));
+                uris.push(`https://ipfs.infura.io/ipfs/${result.path}`);
+                prices.push(toWei(price));
             }
     
             // TODO: Esto se tiene que hacer en una accion con redux?
             console.log('uris: ', uris);
-            console.log('nicks: ', nicks);
-            console.log('teams: ', teams);
             console.log('prices: ', prices);
             
-            // subir a IPFS toda la informacion y asociarla a una URL
-            //const tokenIds = await(await nftContract.mint(uris)).wait();
-            const transaction = await nftContract.mint(uris);
-            let txReceip = await transaction.wait();
+            await(await marketplaceContract.makeItem(nftContract.address, nftContract.address, uris, prices)).wait();
+        } catch (error) {
+            console.log('hubo un eror');
             
-            //const tokenIds = await wait(transaction);
-            console.log('txReceip: ', txReceip);
+            console.log(error);
+        }
+    }
 
-            const lastTokens = await nftContract.tokenId();
-            console.log('lastTokensMinted: ', lastTokens);
-            //await(await nftContract.setApprovalForAll(marketplaceContract.address, true)).wait();
-            //await(await marketplaceContract.makeItem(nftContract.address, tokenIds, prices, nicks, teams)).wait();
+
+    const handleOnClick2 = async() => {
+        try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
             
+            
+            window.ethereum.on('chainChanged', () => {
+                console.log('reloadddd');
+                window.location.reload();
+            });
+            
+            window.ethereum.on('accountsChanged', async function (accounts:string[]) {
+                console.log('CAMBIO DE ACCOUNT: ', accounts[0]);
+                //await handleOnClick2();
+            });
+            
+            const marketplace = new ethers.Contract(MarketplaceAddress.address, MarketplaceAbi.abi, signer);
+            console.log('marketplace contrato: ', marketplace);
+            
+            const code = provider.getCode(MarketplaceAddress.address).then((res) => {
+                console.log('code: ', res);
+                
+            } );
+            const items = await marketplace.itemCount();
+            console.log('items: ', items.toString());
+
         } catch (error) {
             console.log('hubo un eror');
             
@@ -66,6 +94,12 @@ export const Mint = () => {
                 onClick={ handleOnClick }
             >
                 Mint
+            </button>
+            <button
+                type="button"
+                onClick={ () => handleOnClick2() }
+            >
+                ver items
             </button>
         </div>
     )

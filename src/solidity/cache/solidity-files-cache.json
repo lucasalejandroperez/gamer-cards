@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Lucas\\React\\Projects\\gamer-cards\\src\\solidity\\contracts\\Marketplace.sol": {
-      "lastModificationDate": 1653346601698,
-      "contentHash": "0a8ef80e14074415c1c1e4afe351cdbb",
+      "lastModificationDate": 1653359445824,
+      "contentHash": "d01f3226ebdfa7d9ac7e6653c77fab57",
       "sourceName": "src/solidity/contracts/Marketplace.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -518,8 +518,8 @@
       ]
     },
     "C:\\Lucas\\React\\Projects\\gamer-cards\\src\\solidity\\contracts\\ERC721URIStorage.sol": {
-      "lastModificationDate": 1653344152840,
-      "contentHash": "4968c27195ac5d2eeed12b6835898e0c",
+      "lastModificationDate": 1653414855957,
+      "contentHash": "889a0d9d9c931d07f6b82d1797caf465",
       "sourceName": "src/solidity/contracts/ERC721URIStorage.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -548,7 +548,7 @@
         "./ERC721Extend.sol"
       ],
       "versionPragmas": [
-        "^0.8.0"
+        "^0.8.4"
       ],
       "artifacts": [
         "ERC721URIStorage"
@@ -592,8 +592,8 @@
       ]
     },
     "C:\\Lucas\\React\\Projects\\gamer-cards\\src\\solidity\\contracts\\INFT.sol": {
-      "lastModificationDate": 1653344260922,
-      "contentHash": "a19b6fe0e636d559580deb3d6f7d11b0",
+      "lastModificationDate": 1653414853418,
+      "contentHash": "11e40705cc1144f46b924f314b0d43a7",
       "sourceName": "src/solidity/contracts/INFT.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -620,7 +620,7 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.0"
+        "^0.8.4"
       ],
       "artifacts": [
         "INFT"

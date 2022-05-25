@@ -1,11 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { useSelector } from 'react-redux';
+import { IItem } from '../../model/IItem';
+import { fromWei } from '../../utilities/ethereumHelper';
 import { RootState } from '../store';
-
-interface IItem {
-    itemId: number;
-    name: string;
-}
 
 export interface MarketplaceState {
     value: IItem[];
@@ -25,43 +21,35 @@ export interface MarketplaceState {
 // typically used to make async requests.
 export const setItemsAsync = createAsyncThunk(
     'marketplace/fetchItems',
-    async () => {
+    async (contracts:any) => {
+      const { marketplaceContract, nftContract } = contracts;
+      const nftTokenCount = await nftContract.tokenCount();
+      
+      let items:IItem[] = [];
+      const itemCount = await marketplaceContract.itemCount();
+      
+      for (let i = 0; i < itemCount; i++) {
+        const item = await marketplaceContract.items(i + 1);
+        const level = await marketplaceContract.itemCountOfPurchases(item.itemId.toString());
+        const totalPrice = await marketplaceContract.getTotalPrice(item.itemId.toString());
+        const uri = await nftContract.tokenURI(parseInt(item.tokenId.toString()));
+        const metadata = await fetch(uri).then(res => res.json());
 
-      //const marketplaceContract = useSelector((state: RootState) => state.web3.marketplace);
-      //const itemCount = await marketplaceContract.itemCount();
-    //   const marketplace = useAppSelector(getMarketplaceContract);
+        if (item.onSale) {
+          items.push({
+            itemId: item.itemId.toString(),
+            nick: metadata.nick,
+            team: metadata.team,
+            description: metadata.description,
+            image: metadata.image,
+            seller: item.seller,
+            totalPrice: fromWei(totalPrice.toString()),
+            level: level.toString()
+          });
+        }
+      }
 
-    //  const itemCount = await marketplace.itemCount();
-
-      // const itemCount = await marketplace.itemCount()
-      // let items = []
-      // for (let i = 1; i <= itemCount; i++) {
-      //   const item = await marketplace.items(i)
-      //   if (!item.sold) {
-      //     // get uri url from nft contract
-      //     const uri = await nft.tokenURI(item.tokenId)
-      //     // use uri to fetch the nft metadata stored on ipfs 
-      //     const response = await fetch(uri)
-      //     const metadata = await response.json()
-      //     // get total price of item (item price + fee)
-      //     const totalPrice = await marketplace.getTotalPrice(item.itemId)
-      //     // Add item to items array
-      //     items.push({
-      //       totalPrice,
-      //       itemId: item.itemId,
-      //       seller: item.seller,
-      //       name: metadata.name,
-      //       description: metadata.description,
-      //       image: metadata.image
-      //     })
-      //   }
-      // }
-      // setLoading(false)
-      // setItems(items)
-
-      const response = await fetchItems();
-      // The value we return becomes the `fulfilled` action payload
-      return response.data;
+      return items;
     }
   );
 
@@ -100,20 +88,3 @@ export const { setItemList } = marketplaceSlice.actions;
 export const getAllItems = (state: RootState) => state.marketplace.value;
 
 export default marketplaceSlice.reducer;
-
-// Funcion hardcoded, es de prueba para ver como trae los items asincronicamente
-function fetchItems() {
-
-  const items: IItem[] = [{
-    itemId: 1,
-    name: 'ShazaM'
-  },
-  {
-    itemId: 2,
-    name: 'yay'
-  }];
-
-  return new Promise<{ data: IItem[] }>((resolve) =>
-    setTimeout(() => resolve({ data: items }), 1000)
-  );
-}
