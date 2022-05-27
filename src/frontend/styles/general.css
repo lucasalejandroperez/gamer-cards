@@ -1,0 +1,17 @@
+body {
+    /* background:linear-gradient(
+        rgba(30,27,38, 0.95), 
+        rgba(30,27,38, 0.95)),
+      url("https://owcdn.net/img/6142ce5440135.jpg"); */
+    /* background:linear-gradient(
+        rgba(30,27,38, 0.95), 
+        rgba(30,27,38, 0.95)),
+      url("https://i.ibb.co/FDGqCmM/papers-co-ag74-interstellar-wide-space-film-movie-art-33-iphone6-wallpaper.jpg"); */
+    background:linear-gradient(
+        rgba(30,27,38, 0.95), 
+        rgba(30,27,38, 0.95));
+    background-position: center;
+    background-size: cover;
+    background-repeat: repeat;
+    color: rgb(190, 190, 190);
+  }

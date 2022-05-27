@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from "react-redux"
 import { GamerCardsApp } from './frontend/GamerCardsApp';
 import { store } from './frontend/redux/store';
-import './frontend/index.css';
+import './frontend/styles/general.css';
 
 const container = document.getElementById('root')!;
 const root = createRoot(container);
