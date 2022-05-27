@@ -87,15 +87,23 @@ describe('Tests of NFT contract', () => {
     describe('Making marketplace Items', () => { 
         let tokenIds = [1, 2, 3];
         let prices = [toWei(1), toWei(2), toWei(5)];
-        //let nicks = ["TenZ", "TenZ", "TenZ"];
-        //let teams = ["Sentinels", "Sentinels", "Sentinels"];
-        // beforeEach(async () => {
-        //     // // addr9 mints 3 NFTs
-        //     // await nft.connect(addr9).mint(URIs);
 
-        //     // // addr9 approves marketplace to spend nft
-        //     //await nft.connect(deployer).setApprovalForAll(marketplace.address, true);
-        // });
+        it('Should show the correct price to the items created', async() => {
+            await expect(marketplace.connect(deployer).makeItem(nft.address, nft.address, URIs, prices))
+                    .to.emit(marketplace, "Offered")
+                    .withArgs(
+                        tokenIds.length,
+                        nft.address,
+                        tokenIds,
+                        prices,
+                        deployer.address
+                    );
+
+            // price is 1
+            // price + fees 1.02 (in the first purchase)
+            const price = await marketplace.getTotalPrice(1);
+            expect(price).to.equal(toWei("1.02"));
+        });
 
         it('Should track newly created item, transfer NFT from seller to marketplace and emit Offered event', async () => {
             await expect(marketplace.connect(deployer).makeItem(nft.address, nft.address, URIs, prices))
@@ -178,7 +186,6 @@ describe('Tests of NFT contract', () => {
 
             const uri = await nft.tokenURI(parseInt("1"));
             expect(uri).to.equal(URIs[0]);
-            console.log('uri: ', uri);
         });
      });
 
@@ -237,6 +244,36 @@ describe('Tests of NFT contract', () => {
             expect(item.onSale).to.equal(false);
             
         });
+
+        it('Should set the price correctly when the nft is published for the first time after one purchase', async() => {
+            const priceSecondPurchase = 1;
+
+            await expect(marketplace.connect(addr3).purchaseItem(1, {value: ethers.utils.parseEther("1.02")}))
+                    .to.emit(marketplace, "Bought")
+                    .withArgs(
+                        1,
+                        nft.address,
+                        1,
+                        prices[0],
+                        deployer.address,
+                        addr3.address
+                    );
+
+            await expect(marketplace.connect(addr3).publishItem(nft.address, 1, toWei(priceSecondPurchase.toString())))
+                        .to.emit(marketplace, "Published")
+                        .withArgs(
+                            1,
+                            1,
+                            toWei(priceSecondPurchase.toString()),
+                            addr3.address
+                        );
+            
+            const item = await marketplace.items(1);
+            const price = await marketplace.getTotalPrice(1);
+            console.log('EL PRECIO: ', fromWei(price));
+
+            await expect(item.onSale).to.equal(true);
+        })
 
         it('Should pay seller, transfer NFT to buyer, pay double fee to marketplace and GamerOrganization', async () => {
             const marketplaceInitialEthBal = await deployer.getBalance();
@@ -509,7 +546,7 @@ describe('Tests of NFT contract', () => {
             // await nft.connect(addr6).setApprovalForAll(marketplace.address, true);
 
             // addr6 purchase item #1
-            await expect(marketplace.connect(addr6).purchaseItem(1, {value: ethers.utils.parseEther("1.06")}))
+            await expect(marketplace.connect(addr6).purchaseItem(1, {value: ethers.utils.parseEther("1.07")}))
                     .to.emit(marketplace, "Bought")
                     .withArgs(
                         1,
@@ -595,6 +632,9 @@ describe('Tests of NFT contract', () => {
             const item = await marketplace.items(1);
             await expect(item.onSale).to.equal(true);
 
+            const preciop1 = await marketplace.getTotalPrice(1);
+            console.log('[VER]precio del item 1:', fromWei(preciop1));
+
 
             const diamondBuyerInitialEthBal = await addr3.getBalance();
             
@@ -622,6 +662,8 @@ describe('Tests of NFT contract', () => {
                         toWei(priceThirdPurchase.toString()),
                         addr4.address
                     );
+            const preciop2 = await marketplace.getTotalPrice(1);
+            console.log('[VER]precio del item 2:', fromWei(preciop2));
 
             const goldBuyerInitialEthBal = await addr4.getBalance();
             
@@ -648,14 +690,16 @@ describe('Tests of NFT contract', () => {
                         toWei(priceFourPurchase.toString()),
                         addr5.address
                     );
-
+            const preciop3 = await marketplace.getTotalPrice(1);
+            console.log('[VER]precio del item 3:', fromWei(preciop3));
+            
             const silverBuyerInitialEthBal = await addr5.getBalance();
 
             // // addr6 approves marketplace contract to make the action
             // await nft.connect(addr6).setApprovalForAll(marketplace.address, true);
 
             // addr6 purchase item #1
-            await expect(marketplace.connect(addr6).purchaseItem(1, {value: ethers.utils.parseEther("1.06")}))
+            await expect(marketplace.connect(addr6).purchaseItem(1, {value: ethers.utils.parseEther("1.07")}))
                     .to.emit(marketplace, "Bought")
                     .withArgs(
                         1,
@@ -674,12 +718,15 @@ describe('Tests of NFT contract', () => {
                         toWei(priceFivePurchase.toString()),
                         addr6.address
                     );
-
+            
+            const preciop4 = await marketplace.getTotalPrice(1);
+            console.log('[VER]precio del item 4:', fromWei(preciop4));
+            
             // // addr7 approves marketplace contract to make the action
             // await nft.connect(addr7).setApprovalForAll(marketplace.address, true);
 
             // addr7 purchase item #1
-            await expect(marketplace.connect(addr7).purchaseItem(1, {value: ethers.utils.parseEther("1.07")}))
+            await expect(marketplace.connect(addr7).purchaseItem(1, {value: ethers.utils.parseEther("1.08")}))
                     .to.emit(marketplace, "Bought")
                     .withArgs(
                         1,
@@ -831,7 +878,7 @@ describe('Tests of NFT contract', () => {
             // await nft.connect(addr6).setApprovalForAll(marketplace.address, true);
 
             // addr6 purchase item #1
-            await expect(marketplace.connect(addr6).purchaseItem(1, {value: ethers.utils.parseEther("1.06")}))
+            await expect(marketplace.connect(addr6).purchaseItem(1, {value: ethers.utils.parseEther("1.07")}))
                     .to.emit(marketplace, "Bought")
                     .withArgs(
                         1,
@@ -855,7 +902,7 @@ describe('Tests of NFT contract', () => {
             // await nft.connect(addr7).setApprovalForAll(marketplace.address, true);
 
             // addr7 purchase item #1
-            await expect(marketplace.connect(addr7).purchaseItem(1, {value: ethers.utils.parseEther("1.07")}))
+            await expect(marketplace.connect(addr7).purchaseItem(1, {value: ethers.utils.parseEther("1.08")}))
                     .to.emit(marketplace, "Bought")
                     .withArgs(
                         1,
@@ -879,7 +926,7 @@ describe('Tests of NFT contract', () => {
             // await nft.connect(addr8).setApprovalForAll(marketplace.address, true);
 
             // addr8 purchase item #1
-            await expect(marketplace.connect(addr8).purchaseItem(1, {value: ethers.utils.parseEther("1.08")}))
+            await expect(marketplace.connect(addr8).purchaseItem(1, {value: ethers.utils.parseEther("1.09")}))
                     .to.emit(marketplace, "Bought")
                     .withArgs(
                         1,

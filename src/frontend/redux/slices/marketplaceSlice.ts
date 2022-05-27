@@ -1,15 +1,15 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IItem } from '../../model/IItem';
-import { fromWei } from '../../utilities/ethereumHelper';
+import { fromWei, toWei } from '../../utilities/ethereumHelper';
 import { RootState } from '../store';
 
 export interface MarketplaceState {
-    value: IItem[];
+    items: IItem[];
     status: 'idle' | 'loading' | 'failed';
   }
   
   const initialState: MarketplaceState = {
-    value: [],
+    items: [],
     status: 'idle',
   };
 
@@ -20,19 +20,19 @@ export interface MarketplaceState {
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
 export const setItemsAsync = createAsyncThunk(
-    'marketplace/fetchItems',
+    'marketplace/getItems',
     async (contracts:any) => {
       const { marketplaceContract, nftContract } = contracts;
-      const nftTokenCount = await nftContract.tokenCount();
       
       let items:IItem[] = [];
       const itemCount = await marketplaceContract.itemCount();
       
-      for (let i = 0; i < itemCount; i++) {
-        const item = await marketplaceContract.items(i + 1);
+      for (let i = 1; i <= itemCount; i++) {
+        const item = await marketplaceContract.items(i);
         const level = await marketplaceContract.itemCountOfPurchases(item.itemId.toString());
         const totalPrice = await marketplaceContract.getTotalPrice(item.itemId.toString());
         const uri = await nftContract.tokenURI(parseInt(item.tokenId.toString()));
+        // TODO: pasar a axios
         const metadata = await fetch(uri).then(res => res.json());
 
         if (item.onSale) {
@@ -53,13 +53,43 @@ export const setItemsAsync = createAsyncThunk(
     }
   );
 
+  export const purchaseItemAsync = createAsyncThunk(
+    'marketplace/purchaseItem',
+    async (parameters:any) => {
+      const { marketplaceContract, itemId, totalPrice } = parameters;
+
+      const precioTotal = await marketplaceContract.getTotalPrice(itemId);
+
+      console.log('getTotalPrice: ', fromWei(precioTotal));
+      
+
+      await(await marketplaceContract.purchaseItem(itemId, { value: toWei(totalPrice) })).wait();
+    }
+  );
+
+  export const publishItemAsync = createAsyncThunk(
+    'marketplace/publishItem',
+    async (parameters:any) => {
+      const { marketplaceContract, nftContract, itemId, priceToSell } = parameters;
+      console.log('entor al priceToSell publishitemAsync: ', priceToSell);
+      
+      // TODO: En realidad el contrato de nft podria estar ya guardado en el marketplace la primera vez que se deploya, porque el address del contrato del NFT que va a manejar el marketplace va a ser siempre el mismo
+      await(await marketplaceContract.publishItem(nftContract.address, itemId, toWei(priceToSell))).wait();
+
+      // const itemm = await marketplaceContract.items(1);
+      // console.log('itemmm: ', itemm);
+      
+      // TODO: deberia de hacer una llamada a setItems ? para cargar devuelta el estado de los items
+    }
+  );
+
   export const marketplaceSlice = createSlice({
     name: 'marketplace',
     initialState,
     // The `reducers` field lets us define reducers and generate associated actions
     reducers: {
       setItemList: (state, action: PayloadAction<IItem[]>) => {
-        state.value = action.payload;
+        state.items = action.payload;
       },
     },
     //extraReducers: (builder) ... for the async function
@@ -72,9 +102,27 @@ export const setItemsAsync = createAsyncThunk(
         })
         .addCase(setItemsAsync.fulfilled, (state, action) => {
           state.status = 'idle';
-          state.value = action.payload;
+          state.items = action.payload;
         })
         .addCase(setItemsAsync.rejected, (state) => {
+          state.status = 'failed';
+        })
+        .addCase(purchaseItemAsync.pending, (state) => {
+          state.status = 'loading';
+        })
+        .addCase(purchaseItemAsync.fulfilled, (state) => {
+          state.status = 'idle';
+        })
+        .addCase(purchaseItemAsync.rejected, (state) => {
+          state.status = 'failed';
+        })
+        .addCase(publishItemAsync.pending, (state) => {
+          state.status = 'loading';
+        })
+        .addCase(publishItemAsync.fulfilled, (state) => {
+          state.status = 'idle';
+        })
+        .addCase(publishItemAsync.rejected, (state) => {
           state.status = 'failed';
         });
     },
@@ -85,6 +133,6 @@ export const { setItemList } = marketplaceSlice.actions;
   // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-export const getAllItems = (state: RootState) => state.marketplace.value;
+export const getAllItems = (state: RootState) => state.marketplace.items;
 
 export default marketplaceSlice.reducer;

@@ -39,7 +39,7 @@ contract Marketplace is ReentrancyGuard {
         address payable silver;
     }
 
-    mapping(uint => Item) public items;
+    mapping(uint => Item) public items; // itemId => Item
     mapping(uint => Level) public accountsLevels;
 
     event Offered(
@@ -128,7 +128,7 @@ contract Marketplace is ReentrancyGuard {
         require(msg.sender == _nft.ownerOf(_tokenId));
         require(_price > 0, "Price must be greater than zero");
 
-        items[_tokenId].seller = payable(msg.sender);
+        
         items[_tokenId].price = _price;
         items[_tokenId].onSale = true;
 
@@ -158,10 +158,12 @@ contract Marketplace is ReentrancyGuard {
         }
 
         Item storage item = items[_itemId];
+        address _originalSeller = item.seller;
 
         // pay seller 
         item.seller.transfer(item.price);
         item.onSale = false;
+        
         itemCountOfPurchases[_itemId]++;
         
         // pay fees to organizations
@@ -182,16 +184,16 @@ contract Marketplace is ReentrancyGuard {
             accountsLevels[_itemId].gold.transfer(getFeePrice(feeSilverPercent, item.price));
             accountsLevels[_itemId].silver.transfer(getFeePrice(feeSilverPercent, item.price));
         }
-
         
         item.nft.transferFrom(item.seller, msg.sender, item.tokenId);
+        item.seller = payable(msg.sender);
 
         emit Bought(
             _itemId,
             address(item.nft),
             item.tokenId,
             item.price,
-            item.seller,
+            _originalSeller,
             msg.sender
         );
     }
@@ -202,19 +204,19 @@ contract Marketplace is ReentrancyGuard {
 
     function getTotalPrice(uint _itemId) view public returns(uint) {
         uint256 numberOfPurchases = itemCountOfPurchases[_itemId];
-        uint256 feeApplied =  feeGamerOrganizationPercent;
+        uint256 feeApplied =  feeGamerOrganizationPercent + feeMarketplacePercent;
 
-        if (numberOfPurchases > 0) {
-            feeApplied += feeMarketplacePercent;
-        }
+        // if (numberOfPurchases > 0) {
+        //     feeApplied += feeMarketplacePercent;
+        // }
 
-        if (numberOfPurchases == 3) { // apply diamond fee
+        if (numberOfPurchases == 2) { // apply diamond fee
             feeApplied += feeDiamondPercent;
         }
-        else if (numberOfPurchases == 4) { // apply gold fee
+        else if (numberOfPurchases == 3) { // apply gold fee
             feeApplied += feeDiamondPercent + feeGoldPercent;
         }
-        else if (numberOfPurchases == 5) { // apply silver fee
+        else if (numberOfPurchases == 4) { // apply silver fee
             feeApplied += feeDiamondPercent + feeGoldPercent + feeSilverPercent;
         }
 

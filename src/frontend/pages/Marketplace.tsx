@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { setItemList, getAllItems, setItemsAsync } from '../redux/slices/marketplaceSlice';
-import { setWeb3HandlerAsync } from '../redux/slices/web3Slice';
-import { ethers } from "ethers";
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import { getAllItems, setItemsAsync } from '../redux/slices/marketplaceSlice';
+import { ethers } from "ethers";
 import { NFTItem } from '../components/NFTItem';
 
 export const Marketplace = () => {
@@ -21,13 +20,12 @@ export const Marketplace = () => {
   }
 
   useEffect(() => {
-    //dispatch(setItemsAsync({marketplaceContract, nftContract}))
+    dispatch(setItemsAsync({marketplaceContract, nftContract}));
   }, []);
 
   return (
     <>
         <h1>Listado de NFTs</h1>        
-        <button type='button' onClick={ () => dispatch(setItemsAsync({marketplaceContract, nftContract})) }>Cargar Items async</button>
         <button type='button' onClick={ () => prueba() }>Prueba</button>
         <hr />
         {

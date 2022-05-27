@@ -1,10 +1,12 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import marketplaceReducer from './slices/marketplaceSlice';
 import web3Reducer from './slices/web3Slice';
+import myNFTsReducer from './slices/myNFTsSlice';
 
 export const store = configureStore({
   reducer: {
     marketplace: marketplaceReducer,
+    myNFTs: myNFTsReducer,
     web3: web3Reducer
   },
   middleware: (getDefaultMiddleware) =>

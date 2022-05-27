@@ -1,5 +1,6 @@
 export const getLevelDescription = (level:number) => {
     let levelDescription = '';
+    
     switch (level) {
         case 0:
             levelDescription = 'Diamond';

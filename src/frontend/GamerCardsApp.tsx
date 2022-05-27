@@ -4,6 +4,7 @@ import { Home } from './pages/Home';
 import { Layout } from './pages/Layout';
 import { Marketplace } from './pages/Marketplace';
 import { Mint } from './pages/Mint';
+import { MyNFTs } from './pages/MyNFTs';
 
 export const GamerCardsApp = () => {
   return (
@@ -12,6 +13,7 @@ export const GamerCardsApp = () => {
             <Route path="/" element={ <Layout /> }>
                 <Route index element={ <Home /> } />
                 <Route path="marketplace" element={ <Marketplace /> } />
+                <Route path="mynfts" element={ <MyNFTs /> } />
                 <Route path="mint" element={ <Mint /> } />
                 <Route path="about" element={ <About /> } />
 

@@ -8,11 +8,14 @@ export const Layout = () => {
   const dispatch = useAppDispatch();
   const selectedAccount = useAppSelector(getSelectedAccount);
 
+  
+
   return (
     <main>
         <nav>
             <Link to="/">Home</Link> | { " "}
             <Link to="/marketplace">Marketplace</Link> | { " "}
+            <Link to="/mynfts">My NFTs</Link> | { " "}
             <Link to="/mint">Mint</Link> | { " "}
             <Link to="/about">About</Link> | { " "}
             <button 
