@@ -44,7 +44,7 @@ export const NFTItem = ({ itemId, nick, team, description, seller, totalPrice, l
     height: 450px;
     background: #232323;
     border-radius: 20px;
-    box-shadow:5px 5px 115px -14px black;
+    box-shadow: 5px 5px 115px -14px gray;  /* 5px 5px 115px -14px gray;  */
     overflow: hidden;
     margin-bottom: 20px;
 
@@ -57,7 +57,7 @@ export const NFTItem = ({ itemId, nick, team, description, seller, totalPrice, l
       height: 100%;
       background: ${(props) => props.backgroundColorLevel}; /* #7a2f65 */
       background-image: ${(props) => `url(${props.imageUrlLevel})`};
-      background-position-x: 90%;
+      background-position-x: 95%;
       background-size: 50px 50px;
       background-repeat: no-repeat;
       clip-path: circle(150px at 80% 20%);
@@ -95,7 +95,7 @@ export const NFTItem = ({ itemId, nick, team, description, seller, totalPrice, l
       transition-delay: 0.6s;
     }
 
-    &:hover .contentBox .cardButton {
+    &:hover .contentBox .cardButton { 
       opacity: 1;
       transform: translateY(0px);
       transition-delay: 0.75s;
@@ -197,6 +197,13 @@ export const NFTItem = ({ itemId, nick, team, description, seller, totalPrice, l
         margin-bottom: 10px;
     `;
 
+    const CardItemId = styled.span`
+        color: #fff;
+        position: relative;
+        left: 20px;
+        top: 10px;
+    `;
+
     const Text = styled.span`
     `;
 
@@ -205,6 +212,7 @@ export const NFTItem = ({ itemId, nick, team, description, seller, totalPrice, l
             backgroundColorLevel={ getLevelColor(parseInt(level.toString()))}
             imageUrlLevel={ getLevelImage(parseInt(level.toString()))}
         > 
+            <CardItemId>#{itemId.toString()}</CardItemId>
             <CardLevel>{getLevelDescription(parseInt(level.toString()))}</CardLevel>
             <CardImageBox className="imageBox">
                 <CardImage src={image} alt={nick} />
@@ -218,28 +226,28 @@ export const NFTItem = ({ itemId, nick, team, description, seller, totalPrice, l
                 <Text>{totalPrice}</Text>
                 <CardRow className="cardRow">
                     <CardDescription>{description}
-                </CardDescription>
-            </CardRow>
-            {
-                selectedAccount === seller.toUpperCase() 
-                ?
-                <>
-                    <input type="text" onChange={ handleOnChangePriceToSell } width="30" placeholder='Price in ETH...'></input>
+                    </CardDescription>
+                </CardRow>
+                {
+                    selectedAccount === seller.toUpperCase() 
+                    ?
+                    <>
+                        <input type="text" onChange={ handleOnChangePriceToSell } width="30" placeholder='Price in ETH...'></input>
+                        <CardButton 
+                            className="cardButton" 
+                            onClick={ () => handleOnClickSell() }
+                        >
+                            PUBLISH
+                        </CardButton>
+                    </>
+                    :
                     <CardButton 
                         className="cardButton" 
-                        onClick={ () => handleOnClickSell() }
+                        onClick={ () => handleOnClickBuy() }
                     >
-                        PUBLISH
+                        BUY NOW
                     </CardButton>
-                </>
-                :
-                <CardButton 
-                    className="cardButton" 
-                    onClick={ () => handleOnClickBuy() }
-                >
-                    BUY NOW
-                </CardButton>
-            }
+                }
             </CardContentBox>
         </Card>
     )
