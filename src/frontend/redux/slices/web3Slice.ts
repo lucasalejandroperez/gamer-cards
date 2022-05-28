@@ -38,6 +38,7 @@ export const setWeb3HandlerAsync = createAsyncThunk(
         });
 
         let account = await window.ethereum.selectedAddress;
+        
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         console.log('signer: ', signer);
