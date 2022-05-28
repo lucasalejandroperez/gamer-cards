@@ -92,13 +92,13 @@ export const NFTItem = ({ itemId, nick, team, description, seller, totalPrice, l
     &:hover .contentBox .cardRow {
       opacity: 1;
       visibility: visible;
-      transition-delay: 0.6s;
+      transition-delay: 0.3s;
     }
 
     &:hover .contentBox .cardButton { 
       opacity: 1;
       transform: translateY(0px);
-      transition-delay: 0.75s;
+      transition-delay: 0.45s;
     }
   `;
 
@@ -218,7 +218,7 @@ export const NFTItem = ({ itemId, nick, team, description, seller, totalPrice, l
                 <CardImage src={image} alt={nick} />
             </CardImageBox>
             <CardContentBox className="contentBox">
-                <CardTitle>{nick} - {team}</CardTitle>
+                <CardTitle>{nick} <small>({team})</small></CardTitle>
                 <CardPrice>
                     PRICE:
                 </CardPrice>

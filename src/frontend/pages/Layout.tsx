@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link, Outlet } from "react-router-dom";
+import { Navbar } from "../components/Navbar";
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setWeb3HandlerAsync, getSelectedAccount } from '../redux/slices/web3Slice';
 
@@ -11,8 +12,9 @@ export const Layout = () => {
   
 
   return (
-    <main>
-        <nav>
+    <>
+        <Navbar />
+        {/* <nav>
             <Link to="/">Home</Link> | { " "}
             <Link to="/marketplace">Marketplace</Link> | { " "}
             <Link to="/mynfts">My NFTs</Link> | { " "}
@@ -30,10 +32,10 @@ export const Layout = () => {
                 `Conectar a metamask`
               }
             </button>
-        </nav>
+        </nav> */}
         <section>
             <Outlet />
         </section>
-    </main>
+    </>
   )
 }
