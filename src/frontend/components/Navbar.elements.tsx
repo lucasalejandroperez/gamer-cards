@@ -1,13 +1,23 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { mainTheme } from '../styles/mainColors';
 
 interface IMenuProps {
     open: boolean;
 }
 
-export const Container = styled.div`
+interface IContainerProps {
+    showBackground: boolean;
+}
+
+export const Container = styled.div<IContainerProps>`
     width: 100%;
-    height: 70px;
-    background-color: #23394d;
+    height: 90px;
+    position: fixed;
+    top: 0;
+    background-color: ${(props) => props.showBackground ? mainTheme.primaryColor : 'transparent' };
+    transition: 0.5s ease-in-out;
+    z-index: 1;
 `;
 
 export const Wrapper = styled.div`
@@ -22,27 +32,25 @@ export const Wrapper = styled.div`
 
 export const LogoContainer = styled.div`
     margin-left: 0.5rem;
+    margin-right: 7.5rem;
     display: flex;
     align-items: center;
     font-size: 1.2rem;
-    font-family: sans-serif;
+    font-family: 'Poppins', sans-serif;
 
     p {
-        &:nth-child(2){
-            color: #fff;
-        }
-
-        &:nth-child(3){
-            font-size: 1.5rem;
-            font-weight: 500;
-            color: #e07924;
-        }
+        color: ${mainTheme.contrastColor};
     }
 
     svg {
-        fill: #e07924;
+        fill: ${mainTheme.terciaryColor};
         margin-right: 0.5rem;
     }
+`;
+
+export const Logo = styled.img`
+    width: 50px;
+    height: 50px;
 `;
 
 export const Menu = styled.ul<IMenuProps>`
@@ -77,22 +85,26 @@ export const MenuItem = styled.li`
     }
 `;
 
-export const MenuItemLink = styled.a`
+export const MenuItemLink = styled(Link)`
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 0.5rem;
     height: 100%;
-    padding: 0.5rem 2.5rem;
-    color: #64b2ff;
-    font-family: sans-serif;
+    padding: 0.5rem 1.5rem;
+    color: ${mainTheme.lightColor};
+    font-family: 'Poppins', sans-serif;
     font-size: 1rem;
-    font-weight: 300;
+    font-weight: 400;
     cursor: pointer;
     transition: 0.5s all ease;
+    text-decoration: none;
 
     &:hover {
-        color: #fff;
-        background-color: #e0792a;
+        /* color: ${mainTheme.darkColor}; */
+        /* background-color: ${mainTheme.lightColor}; */
+        background: linear-gradient(transparent 50%, ${mainTheme.lightColor});
+        border-radius: 0.5rem;
         transition: 0.5s all ease;
 
         div {
@@ -111,7 +123,7 @@ export const MenuItemLink = styled.a`
 
         svg {
             display: none;
-            fill: #e0792a;
+            fill: ${mainTheme.terciaryColor};
             margin-right: 0.5rem;
         }
     }
@@ -172,8 +184,61 @@ export const MobileIcon = styled.div`
         cursor: pointer;
 
         svg {
-            fill: #e07924;
+            fill: ${mainTheme.terciaryColor};
             margin-right: 0.5rem;
         }
     } 
+`;
+
+export const WalletIcon = styled.div`
+    display: flex;
+    height: 100%;
+    align-items: center;
+
+    span {
+        margin-left: 0.5rem;
+        font-family: 'Poppins', sans-serif;
+        color: ${mainTheme.contrastColor};
+    }
+`;
+
+export const MenuElement = styled.div`
+    display: flex;
+    height: 100%;
+    align-items: center;
+`;
+
+export const ConnectWalletButton = styled.a`
+    background-image: linear-gradient(to right, ${mainTheme.terciaryColor} 0%, ${mainTheme.terciaryColor} 100%);
+    border-radius: 40px;
+    box-sizing: border-box;
+    cursor: pointer;
+    color: ${mainTheme.contrastColor};
+    display: block;
+    height: 50px;
+    font-size: 1em;
+    font-family: 'Poppins', sans-serif;
+    padding: 1px;
+    position: relative;
+    text-decoration: none;
+    width: 15rem;
+
+    &:hover {
+        color: #fff;
+    }
+
+    &:hover span {
+        background: transparent;
+    }
+
+    span {
+        align-items: center;
+        background: ${mainTheme.primaryColor};
+        border-radius: 40px;
+        display: flex;
+        justify-content: center;
+        height: 100%;
+        transition: background 0.5s ease;
+        width: 100%;
+    }
 `;

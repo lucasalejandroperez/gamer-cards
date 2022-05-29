@@ -60,3 +60,11 @@ export const getLevelImage = (level:number) => {
 
     return levelImage;
 }
+
+export const getShortenedAddressAccount = (address:string) => {
+    let shortenedAddress = address.substring(0, 6);
+    shortenedAddress += '...';
+    shortenedAddress += address.substring(address.length - 4, address.length);
+
+    return shortenedAddress;
+}

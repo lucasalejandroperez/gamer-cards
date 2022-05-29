@@ -3,36 +3,4 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800,300italic,400italic,600italic,700italic,800italic);
 @import url(https://fonts.googleapis.com/css?family=Oswald:400,700);
 @import url(https://fonts.googleapis.com/css?family=Nunito:400,700);
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-body {
-    /* background:linear-gradient(
-        rgba(30,27,38, 0.95), 
-        rgba(30,27,38, 0.95)),
-      url("https://owcdn.net/img/6142ce5440135.jpg"); */
-    /* background:linear-gradient(
-        rgba(30,27,38, 0.95), 
-        rgba(30,27,38, 0.95)),
-      url("https://i.ibb.co/FDGqCmM/papers-co-ag74-interstellar-wide-space-film-movie-art-33-iphone6-wallpaper.jpg"); */
-    background:linear-gradient(
-        rgba(30,27,38, 0.95), 
-        rgba(30,27,38, 0.95));
-    color: rgb(190, 190, 190);
-    overflow-x: hidden;
-  }
-
-  h1,h2,h3 {
-    font-family: 'Montserrat', sans-serif;
-  }
-
-  span {
-    font-family: 'Open Sans', sans-serif;
-  }
-
-  a {
-    font-family: 'Montserrat', sans-serif;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@1,100&display=swap');

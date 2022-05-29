@@ -18,7 +18,7 @@ export const MyNFTs = () => {
     }, []);
     
     return (
-        <div> 
+        <div style={{ height: '100vh', margin: '100px 100px' }}> 
             {
                 items.map((item) => (
                     <NFTItem 

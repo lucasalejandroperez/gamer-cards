@@ -33,7 +33,7 @@ export const Mint = () => {
     }
 
     return (
-        <div>
+        <div style={{ height: '100vh', margin: '100px 100px' }}>
             <h1>Mintear NFTs</h1>
             <button 
                 type="button"

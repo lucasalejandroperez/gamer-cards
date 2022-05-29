@@ -1,5 +1,17 @@
-import React, {useState} from 'react';
-import { Container, LogoContainer, Menu, MenuItem, MenuItemLink, MobileIcon, Wrapper } from "./Navbar.elements";
+import {useEffect, useState} from 'react';
+import { 
+    Container, 
+    LogoContainer, 
+    Logo,
+    Menu, 
+    MenuItem, 
+    MenuItemLink, 
+    MobileIcon, 
+    Wrapper,
+    WalletIcon,
+    ConnectWalletButton,
+    MenuElement
+} from "./Navbar.elements";
 import { 
     FaBars, 
     FaBattleNet,
@@ -7,24 +19,47 @@ import {
     FaHome,
     FaUserAlt,
     FaBriefcase,
-    FaGlasses
+    FaGlasses,
+    FaWallet
 } from 'react-icons/fa';
 import { IconContext } from 'react-icons';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { getSelectedAccount, setWeb3HandlerAsync } from '../redux/slices/web3Slice';
+import { getShortenedAddressAccount } from '../utilities/marketplaceHelper';
 
 export const Navbar = () => {
-    const [showMobileMenu, setShowMobileMenu] = useState(false)
+
+    const dispatch = useAppDispatch();
+    const selectedAccount = useAppSelector(getSelectedAccount);
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
+    const [showNavbarBackgroundColor, setShowNavbarBackgroundColor] = useState(false);
+
+    const changeNavBackgroundColor = () => {
+        if (window.scrollY >= 90) {
+            setShowNavbarBackgroundColor(true);
+        }
+        else {
+            setShowNavbarBackgroundColor(false);
+        }
+    }
+    
+    useEffect(() => {
+        window.addEventListener('scroll', changeNavBackgroundColor);
+    
+        return () => {
+            window.removeEventListener('scroll', changeNavBackgroundColor);
+        }
+    }, []);
+    
 
     return (
-        <Container>
+        <Container showBackground={showNavbarBackgroundColor}>
             <Wrapper>
                 <IconContext.Provider value={{ style: { fontSize: "2em" } }}>
                     <LogoContainer>
-                        <FaBattleNet />
+                        <Logo src="../assets/images/logo.png" alt="Gamer Cards" />
                         <p>
-                            Vector -
-                        </p>
-                        <p>
-                            F(X)
+                            Gamer Cards
                         </p>
                     </LogoContainer>
                     <MobileIcon onClick={ () => setShowMobileMenu(!showMobileMenu) }>
@@ -38,7 +73,7 @@ export const Navbar = () => {
                     </MobileIcon>
                     <Menu open={showMobileMenu}>
                         <MenuItem>
-                            <MenuItemLink onClick={ () => setShowMobileMenu(!showMobileMenu) }>
+                            <MenuItemLink to="/" onClick={ () => setShowMobileMenu(!showMobileMenu) }>
                                 <div>
                                     <FaHome />
                                     HOME
@@ -46,30 +81,54 @@ export const Navbar = () => {
                             </MenuItemLink>
                         </MenuItem>
                         <MenuItem>
-                            <MenuItemLink onClick={ () => setShowMobileMenu(!showMobileMenu) }>
+                            <MenuItemLink to="/mint" onClick={ () => setShowMobileMenu(!showMobileMenu) }>
+                                <div>
+                                    <FaHome />
+                                    MINT
+                                </div>
+                            </MenuItemLink>
+                        </MenuItem>
+                        <MenuItem>
+                            <MenuItemLink to="/marketplace" onClick={ () => setShowMobileMenu(!showMobileMenu) }>
                                 <div>
                                     <FaUserAlt />
-                                    ABOUT ME
+                                    MARKETPLACE
                                 </div>
                             </MenuItemLink>
                         </MenuItem>
                         <MenuItem>
-                            <MenuItemLink onClick={ () => setShowMobileMenu(!showMobileMenu) }>
+                            <MenuItemLink to="/mynfts" onClick={ () => setShowMobileMenu(!showMobileMenu) }>
                                 <div>
                                     <FaBriefcase />
-                                    PORTFOLIO
+                                    MY NFTS
                                 </div>
                             </MenuItemLink>
                         </MenuItem>
                         <MenuItem>
-                            <MenuItemLink onClick={ () => setShowMobileMenu(!showMobileMenu) }>
+                            <MenuItemLink to="/about" onClick={ () => setShowMobileMenu(!showMobileMenu) }>
                                 <div>
                                     <FaGlasses />
-                                    CONTACT ME
+                                    ABOUT
                                 </div>
                             </MenuItemLink>
                         </MenuItem>
                     </Menu>
+                    {
+                        selectedAccount 
+                        ?
+                        <WalletIcon>
+                            <FaWallet />
+                            <span>{getShortenedAddressAccount(selectedAccount)}</span>
+                        </WalletIcon>
+                        :
+                        <MenuElement>
+                            <ConnectWalletButton
+                                onClick={() => dispatch(setWeb3HandlerAsync())}
+                            >
+                                <span>CONNECT WALLET</span>
+                            </ConnectWalletButton>
+                        </MenuElement>
+                    }
                 </IconContext.Provider>
             </Wrapper>
         </Container>

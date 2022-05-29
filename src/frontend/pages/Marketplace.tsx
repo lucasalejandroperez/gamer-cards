@@ -25,17 +25,18 @@ export const Marketplace = () => {
   }, []);
 
   const CardContainer = styled.div`
-        /* display: flex; */
         display: grid;
         grid-template-columns: repeat(4, 1fr);
   `;
 
-  const Container = styled.div`
-    margin-top: 40px;
+  const MarketplaceContainer = styled.div`
+    margin-top: 100px;
+    margin-left: 40px;
+    height: 100vh;
   `;
 
   return (
-    <Container>
+    <MarketplaceContainer>
       <CardContainer>
         {
           items.map((item) => (
@@ -53,6 +54,6 @@ export const Marketplace = () => {
           ))
         }
       </CardContainer>
-    </Container>
+    </MarketplaceContainer>
   )
 }
