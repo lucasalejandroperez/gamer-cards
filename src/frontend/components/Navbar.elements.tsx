@@ -17,7 +17,7 @@ export const Container = styled.div<IContainerProps>`
     top: 0;
     background-color: ${(props) => props.showBackground ? mainTheme.primaryColor : 'transparent' };
     transition: 0.5s ease-in-out;
-    z-index: 1;
+    z-index: 3;
 `;
 
 export const Wrapper = styled.div`
