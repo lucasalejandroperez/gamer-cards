@@ -5,6 +5,7 @@ import { useAppDispatch } from '../redux/hooks';
 import { purchaseItemAsync, setItemsAsync, publishItemAsync } from '../redux/slices/marketplaceSlice';
 import { RootState } from '../redux/store';
 import { getLevelColor, getLevelDescription, getLevelImage } from '../utilities/marketplaceHelper';
+import { Loading } from './Loading';
 import { 
     Card,
     CardImageBox,
@@ -25,13 +26,15 @@ export const NFTItem = ({ itemId, nick, team, description, seller, totalPrice, l
     const selectedAccount = useSelector((state: RootState) => state.web3.selectedAccount);
     const marketplaceContract = useSelector((state: RootState) => state.web3.marketplace);
     const nftContract = useSelector((state: RootState) => state.web3.nft);
+    const loadingPurchase = useSelector((state: RootState) => state.marketplace.loadingPurchase);
     const dispatch = useAppDispatch();
     const [priceToSell, setPriceToSell] = useState('');
 
     const handleOnClickBuy = () => {
-        dispatch(purchaseItemAsync({marketplaceContract, itemId, totalPrice}));
-        // TODO: No se actualiza esto
-        dispatch(setItemsAsync({marketplaceContract, nftContract}));
+        dispatch(purchaseItemAsync({marketplaceContract, itemId, totalPrice})).then(() => {
+            // TODO: No se actualiza esto
+            dispatch(setItemsAsync({marketplaceContract, nftContract}));
+        });
     }
 
     const handleOnClickSell = () => {
@@ -69,6 +72,7 @@ export const NFTItem = ({ itemId, nick, team, description, seller, totalPrice, l
                     <>
                         <input type="text" onChange={ handleOnChangePriceToSell } width="30" placeholder='Price in ETH...'></input>
                         <CardButton 
+                            type="button"
                             className="cardButton" 
                             onClick={ () => handleOnClickSell() }
                         >
@@ -76,12 +80,16 @@ export const NFTItem = ({ itemId, nick, team, description, seller, totalPrice, l
                         </CardButton>
                     </>
                     :
-                    <CardButton 
-                        className="cardButton" 
-                        onClick={ () => handleOnClickBuy() }
-                    >
-                        BUY NOW
-                    </CardButton>
+                        loadingPurchase 
+                        ? 
+                        <Loading /> 
+                        : 
+                        <CardButton 
+                            className="cardButton" 
+                            onClick={ () => handleOnClickBuy() }
+                        >
+                            BUY NOW
+                        </CardButton>
                 }
             </CardContentBox>
         </Card>

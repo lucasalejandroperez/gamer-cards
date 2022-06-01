@@ -6,11 +6,13 @@ import { RootState } from '../store';
 export interface MarketplaceState {
     items: IItem[];
     status: 'idle' | 'loading' | 'failed';
+    loadingPurchase: boolean; 
   }
   
   const initialState: MarketplaceState = {
     items: [],
     status: 'idle',
+    loadingPurchase: false,
   };
 
 // Here is the async functions
@@ -128,13 +130,13 @@ export const setItemsAsync = createAsyncThunk(
           state.status = 'failed';
         })
         .addCase(purchaseItemAsync.pending, (state) => {
-          state.status = 'loading';
+          state.loadingPurchase = true;
         })
         .addCase(purchaseItemAsync.fulfilled, (state) => {
-          state.status = 'idle';
+          state.loadingPurchase = false;
         })
         .addCase(purchaseItemAsync.rejected, (state) => {
-          state.status = 'failed';
+          state.loadingPurchase = false;
         })
         .addCase(publishItemAsync.pending, (state) => {
           state.status = 'loading';

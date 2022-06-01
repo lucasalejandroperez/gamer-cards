@@ -1,6 +1,8 @@
-import styled from 'styled-components';
+import { 
+  FaGithub,
+  FaEnvelope
+} from 'react-icons/fa';
 import { GenericLink, HeroContentLeft, HeroSection } from "../components/generic.elements"
-import { mainTheme } from '../styles/mainColors';
 
 export const About = () => {
 
@@ -16,15 +18,18 @@ export const About = () => {
           <h1>Developed by</h1>
           <h1>Lucas Perez</h1>
           <p>Web3 Software Developer</p>
-          
           <p>
-            Mail:
-            <a href="mailto:lucas.alejandro.perez@gmail.com" target="_blank" rel="noreferrer" className="text-reset">
+            <FaEnvelope />
+            <GenericLink
+              href="mailto:lucas.alejandro.perez@gmail.com" 
+              target="_blank" 
+              rel="noreferrer"
+            >
               lucas.alejandro.perez@gmail.com
-            </a>
+            </GenericLink>
           </p>
           <p>
-            Github:
+            <FaGithub />
             <GenericLink
               href="https://github.com/lucasalejandroperez" 
               target="_blank" 

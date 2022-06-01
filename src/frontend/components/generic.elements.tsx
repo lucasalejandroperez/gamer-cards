@@ -3,8 +3,14 @@ import { mainTheme } from '../styles/mainColors';
 
 // ****** LINKS ****** 
 export const GenericLink = styled.a`
-    color: ${mainTheme.contrastColor};
+    color: ${mainTheme.fourthColor};
     text-decoration: none;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+
+    &:hover {
+        color: ${mainTheme.terciaryColor};
+    }
 `;
 
 // ****** BUTTONS ****** 

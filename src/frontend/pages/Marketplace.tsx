@@ -6,6 +6,8 @@ import { getAllItems, setItemsAsync } from '../redux/slices/marketplaceSlice';
 import { ethers } from "ethers";
 import { NFTItem } from '../components/NFTItem';
 import styled from 'styled-components';
+import { Loading } from '../components/Loading';
+import { LoadingFullSize } from '../components/LoadingFullSize';
 
 export const Marketplace = () => {
 
@@ -14,6 +16,7 @@ export const Marketplace = () => {
   const dispatch = useAppDispatch();
   const nftContract = useSelector((state: RootState) => state.web3.nft);
   const marketplaceContract = useSelector((state: RootState) => state.web3.marketplace);
+  const status = useSelector((state: RootState) => state.marketplace.status);
 
   const prueba = async() => {
     const itemCount = await marketplaceContract.itemCount();
@@ -35,8 +38,18 @@ export const Marketplace = () => {
     height: 100vh;
   `;
 
+  if (status === 'loading') {
+    return (
+      <LoadingFullSize />
+    );
+  }
+
   return (
     <MarketplaceContainer>
+      {
+        items.length === 0 &&
+        <h1>You must connect your wallet.</h1>
+      }
       <CardContainer>
         {
           items.map((item) => (
