@@ -10,7 +10,8 @@ import {
     Wrapper,
     WalletIcon,
     ConnectWalletButton,
-    MenuElement
+    MenuElement,
+    LogoItemLink
 } from "./Navbar.elements";
 import { 
     FaBars, 
@@ -56,12 +57,12 @@ export const Navbar = () => {
         <Container showBackground={showNavbarBackgroundColor}>
             <Wrapper>
                 <IconContext.Provider value={{ style: { fontSize: "2em" } }}>
-                    <LogoContainer>
+                    <LogoItemLink to="/">
                         <Logo src="../assets/images/logo.png" alt="Gamer Cards" />
                         <p>
                             Gamer Cards
                         </p>
-                    </LogoContainer>
+                    </LogoItemLink>
                     <MobileIcon onClick={ () => setShowMobileMenu(!showMobileMenu) }>
                         {
                             showMobileMenu 

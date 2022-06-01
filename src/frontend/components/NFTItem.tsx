@@ -27,12 +27,12 @@ export const NFTItem = ({ itemId, nick, team, description, seller, totalPrice, l
     const marketplaceContract = useSelector((state: RootState) => state.web3.marketplace);
     const nftContract = useSelector((state: RootState) => state.web3.nft);
     const loadingPurchase = useSelector((state: RootState) => state.marketplace.loadingPurchase);
+    const loadingPublish = useSelector((state: RootState) => state.marketplace.loadingPublish);
     const dispatch = useAppDispatch();
     const [priceToSell, setPriceToSell] = useState('');
 
     const handleOnClickBuy = () => {
         dispatch(purchaseItemAsync({marketplaceContract, itemId, totalPrice})).then(() => {
-            // TODO: No se actualiza esto
             dispatch(setItemsAsync({marketplaceContract, nftContract}));
         });
     }
@@ -45,13 +45,17 @@ export const NFTItem = ({ itemId, nick, team, description, seller, totalPrice, l
         setPriceToSell(event.target.value);
     }
 
+    console.log(`✨✨ level del item ${itemId} - ${nick}: `, level);
+    
+    
+
     return (
         <Card 
-            backgroundColorLevel={ getLevelColor(parseInt(level.toString()))}
-            imageUrlLevel={ getLevelImage(parseInt(level.toString()))}
+            backgroundColorLevel={ getLevelColor(parseInt(level.toString())) }
+            imageUrlLevel={ getLevelImage(parseInt(level.toString())) }
         > 
             <CardItemId>#{itemId.toString()}</CardItemId>
-            <CardLevel>{getLevelDescription(parseInt(level.toString()))}</CardLevel>
+            <CardLevel>{getLevelDescription(parseInt(level.toString())) }</CardLevel>
             <CardImageBox className="imageBox">
                 <CardImage src={image} alt={nick} />
             </CardImageBox>
@@ -69,18 +73,27 @@ export const NFTItem = ({ itemId, nick, team, description, seller, totalPrice, l
                 {
                     selectedAccount === seller.toUpperCase() 
                     ?
-                    <>
-                        <input type="text" onChange={ handleOnChangePriceToSell } width="30" placeholder='Price in ETH...'></input>
-                        <CardButton 
-                            type="button"
-                            className="cardButton" 
-                            onClick={ () => handleOnClickSell() }
-                        >
-                            PUBLISH
-                        </CardButton>
-                    </>
+                        loadingPublish 
+                        ?
+                            <Loading />
+                        :
+                            <>
+                                <input 
+                                    type="text" 
+                                    onChange={ handleOnChangePriceToSell } 
+                                    width="30" 
+                                    placeholder='Price in ETH...'
+                                />
+                                <CardButton 
+                                    type="button"
+                                    className="cardButton" 
+                                    onClick={ () => handleOnClickSell() }
+                                >
+                                    PUBLISH
+                                </CardButton>
+                            </>
                     :
-                        loadingPurchase 
+                        loadingPurchase
                         ? 
                         <Loading /> 
                         : 

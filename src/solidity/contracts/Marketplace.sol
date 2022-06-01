@@ -147,6 +147,7 @@ contract Marketplace is ReentrancyGuard {
         require(items[_itemId].onSale == true, "Item isn't on sale");
         require(items[_itemId].seller != msg.sender, "Owners can't buy their own items");
 
+        // Asignation of levels (only for the first 3 purchases)
         if (itemCountOfPurchases[_itemId] == 0) {
             accountsLevels[_itemId].diamond = payable(msg.sender);
         }
@@ -171,17 +172,13 @@ contract Marketplace is ReentrancyGuard {
         accountOwnerMarketplace.transfer(getFeePrice(feeMarketplacePercent, item.price));
         accountGamerOrganization.transfer(getFeePrice(feeGamerOrganizationPercent, item.price));
 
-        // pay fees to users
-        if (itemCountOfPurchases[_itemId] == 3) { // pay to diamond account (diamond fee)
+        if (itemCountOfPurchases[_itemId] >= 3) { // pay to diamond account (diamond fee)
             accountsLevels[_itemId].diamond.transfer(getFeePrice(feeDiamondPercent, item.price));
         }
-        else if (itemCountOfPurchases[_itemId] == 4) { // pay to diamond and gold accounts (gold fee)
-            accountsLevels[_itemId].diamond.transfer(getFeePrice(feeGoldPercent, item.price));
+        else if (itemCountOfPurchases[_itemId] >= 4) { // pay to diamond and gold accounts (gold fee)
             accountsLevels[_itemId].gold.transfer(getFeePrice(feeGoldPercent, item.price));
         }
-        else if (itemCountOfPurchases[_itemId] == 5) { // pay to diamond, gold and silver accounts (silver fee)
-            accountsLevels[_itemId].diamond.transfer(getFeePrice(feeSilverPercent, item.price));
-            accountsLevels[_itemId].gold.transfer(getFeePrice(feeSilverPercent, item.price));
+        else if (itemCountOfPurchases[_itemId] >= 5) { // pay to diamond, gold and silver accounts (silver fee)
             accountsLevels[_itemId].silver.transfer(getFeePrice(feeSilverPercent, item.price));
         }
         

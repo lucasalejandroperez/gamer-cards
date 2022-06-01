@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { CardsContainer, CardsGrid } from '../components/Cards.elements';
 import { LoadingFullSize } from '../components/LoadingFullSize';
 import { NFTItem } from '../components/NFTItem';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -19,33 +20,48 @@ export const MyNFTs = () => {
         dispatch(getMyNFTsAsync({marketplaceContract, nftContract, selectedAccount}));
     }, []);
 
+    const getNumberLevelFixed = (level:number) => {
+        // This is a hack to fix the level number.
+        if (level === 0) {
+            return 0;
+        } 
+        else {
+            return level - 1;
+        }
+    }
+
     if (status === 'loading') {
         return (
           <LoadingFullSize />
         );
     }
-    
+
     return (
-        <div style={{ height: '100vh', margin: '100px 100px' }}> 
+        <CardsContainer>
             {
-                items.length === 0 &&
+                items.length > 0 
+                ?
+                <h1>My NFTs</h1>
+                :
                 <h1>You must connect your wallet.</h1>
             }
-            {
-                items.map((item) => (
-                    <NFTItem 
-                        key={item.itemId}
-                        itemId={item.itemId}
-                        nick={item.nick}
-                        team={item.team}
-                        description={item.description}
-                        seller={item.seller}
-                        totalPrice={item.totalPrice}
-                        level={item.level}
-                        image={item.image}
-                    />
-                ))
-            }
-        </div>
+            <CardsGrid>
+                {
+                    items.map((item) => (
+                        <NFTItem 
+                            key={item.itemId}
+                            itemId={item.itemId}
+                            nick={item.nick}
+                            team={item.team}
+                            description={item.description}
+                            seller={item.seller}
+                            totalPrice={item.totalPrice}
+                            level={getNumberLevelFixed(parseInt(item.level.toString()))}
+                            image={item.image}
+                        />
+                    ))
+                }
+            </CardsGrid>
+        </CardsContainer>
     )
 }

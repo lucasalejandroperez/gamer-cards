@@ -3,11 +3,9 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { getAllItems, setItemsAsync } from '../redux/slices/marketplaceSlice';
-import { ethers } from "ethers";
 import { NFTItem } from '../components/NFTItem';
-import styled from 'styled-components';
-import { Loading } from '../components/Loading';
 import { LoadingFullSize } from '../components/LoadingFullSize';
+import { CardsContainer, CardsGrid } from '../components/Cards.elements';
 
 export const Marketplace = () => {
 
@@ -18,25 +16,9 @@ export const Marketplace = () => {
   const marketplaceContract = useSelector((state: RootState) => state.web3.marketplace);
   const status = useSelector((state: RootState) => state.marketplace.status);
 
-  const prueba = async() => {
-    const itemCount = await marketplaceContract.itemCount();
-    console.log('itemCount: ', itemCount.toString());
-  }
-
   useEffect(() => {
     dispatch(setItemsAsync({marketplaceContract, nftContract}));
   }, []);
-
-  const CardContainer = styled.div`
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-  `;
-
-  const MarketplaceContainer = styled.div`
-    margin-top: 100px;
-    margin-left: 40px;
-    height: 100vh;
-  `;
 
   if (status === 'loading') {
     return (
@@ -45,12 +27,12 @@ export const Marketplace = () => {
   }
 
   return (
-    <MarketplaceContainer>
+    <CardsContainer>
       {
         items.length === 0 &&
         <h1>You must connect your wallet.</h1>
       }
-      <CardContainer>
+      <CardsGrid>
         {
           items.map((item) => (
               <NFTItem 
@@ -66,7 +48,7 @@ export const Marketplace = () => {
               />
           ))
         }
-      </CardContainer>
-    </MarketplaceContainer>
+      </CardsGrid>
+    </CardsContainer>
   )
 }

@@ -7,12 +7,14 @@ export interface MarketplaceState {
     items: IItem[];
     status: 'idle' | 'loading' | 'failed';
     loadingPurchase: boolean; 
+    loadingPublish: boolean;
   }
   
   const initialState: MarketplaceState = {
     items: [],
     status: 'idle',
     loadingPurchase: false,
+    loadingPublish: false,
   };
 
 // Here is the async functions
@@ -79,11 +81,9 @@ export const setItemsAsync = createAsyncThunk(
     'marketplace/purchaseItem',
     async (parameters:any) => {
       const { marketplaceContract, itemId, totalPrice } = parameters;
-
       const precioTotal = await marketplaceContract.getTotalPrice(itemId);
 
       console.log('getTotalPrice: ', fromWei(precioTotal));
-      
 
       await(await marketplaceContract.purchaseItem(itemId, { value: toWei(totalPrice) })).wait();
     }
@@ -93,14 +93,9 @@ export const setItemsAsync = createAsyncThunk(
     'marketplace/publishItem',
     async (parameters:any) => {
       const { marketplaceContract, nftContract, itemId, priceToSell } = parameters;
-      console.log('entor al priceToSell publishitemAsync: ', priceToSell);
-      
       // TODO: En realidad el contrato de nft podria estar ya guardado en el marketplace la primera vez que se deploya, porque el address del contrato del NFT que va a manejar el marketplace va a ser siempre el mismo
       await(await marketplaceContract.publishItem(nftContract.address, itemId, toWei(priceToSell))).wait();
 
-      // const itemm = await marketplaceContract.items(1);
-      // console.log('itemmm: ', itemm);
-      
       // TODO: deberia de hacer una llamada a setItems ? para cargar devuelta el estado de los items
     }
   );
@@ -139,13 +134,13 @@ export const setItemsAsync = createAsyncThunk(
           state.loadingPurchase = false;
         })
         .addCase(publishItemAsync.pending, (state) => {
-          state.status = 'loading';
+          state.loadingPublish = true;
         })
         .addCase(publishItemAsync.fulfilled, (state) => {
-          state.status = 'idle';
+          state.loadingPublish = false;
         })
         .addCase(publishItemAsync.rejected, (state) => {
-          state.status = 'failed';
+          state.loadingPublish = false;
         });
     },
   });

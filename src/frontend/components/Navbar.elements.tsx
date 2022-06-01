@@ -30,6 +30,26 @@ export const Wrapper = styled.div`
     margin: auto;
 `;
 
+export const LogoItemLink = styled(Link)`
+    margin-left: 0.5rem;
+    margin-right: 7.5rem;
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+
+    p {
+        color: ${mainTheme.contrastColor};
+    }
+
+    svg {
+        fill: ${mainTheme.terciaryColor};
+        margin-right: 0.5rem;
+    }
+`;
+
 export const LogoContainer = styled.div`
     margin-left: 0.5rem;
     margin-right: 7.5rem;
@@ -37,6 +57,7 @@ export const LogoContainer = styled.div`
     align-items: center;
     font-size: 1.2rem;
     font-family: 'Poppins', sans-serif;
+    cursor: pointer;
 
     p {
         color: ${mainTheme.contrastColor};
@@ -206,6 +227,20 @@ export const MenuElement = styled.div`
     display: flex;
     height: 100%;
     align-items: center;
+    margin-right: 20px;
+    
+    @media screen and (max-width: 960px) {
+        display: none;
+    }
+
+    @media screen and (max-width: 880px) {
+    }
+
+    @media screen and (max-width: 500px) {
+    }
+
+    @media screen and (max-width: 260px) {
+    }
 `;
 
 export const ConnectWalletButton = styled.a`
