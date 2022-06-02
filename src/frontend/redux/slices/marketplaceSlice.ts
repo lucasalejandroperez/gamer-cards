@@ -50,26 +50,6 @@ export const setItemsAsync = createAsyncThunk(
             totalPrice: fromWei(totalPrice.toString()),
             level: level.toString()
           });
-          items.push({
-            itemId: item.itemId.toString(),
-            nick: metadata.nick,
-            team: metadata.team,
-            description: metadata.description,
-            image: metadata.image,
-            seller: item.seller,
-            totalPrice: fromWei(totalPrice.toString()),
-            level: level.toString()
-          });
-          items.push({
-            itemId: item.itemId.toString(),
-            nick: metadata.nick,
-            team: metadata.team,
-            description: metadata.description,
-            image: metadata.image,
-            seller: item.seller,
-            totalPrice: fromWei(totalPrice.toString()),
-            level: level.toString()
-          });
         }
       }
 

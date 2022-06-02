@@ -36,9 +36,6 @@ export const MyNFTs = () => {
         );
     }
 
-    console.log('selected account: ', selectedAccount);
-    
-
     return (
         <CardsContainer
             data-aos="fade-in"
