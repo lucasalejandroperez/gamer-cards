@@ -14,6 +14,7 @@ export const Marketplace = () => {
   const dispatch = useAppDispatch();
   const nftContract = useSelector((state: RootState) => state.web3.nft);
   const marketplaceContract = useSelector((state: RootState) => state.web3.marketplace);
+  const selectedAccount = useSelector((state: RootState) => state.web3.selectedAccount);
   const status = useSelector((state: RootState) => state.marketplace.status);
 
   useEffect(() => {
@@ -33,8 +34,15 @@ export const Marketplace = () => {
       data-aos-easing="ease-in-out"
     >
       {
-        items.length === 0 &&
-        <h1>You must connect your wallet.</h1>
+        !selectedAccount
+        ?
+            <h1>You must connect your wallet.</h1>
+        :
+            items.length > 0 
+            ?
+                <h1>My NFTs</h1>
+            :
+                <h1>There is no NFTs in the marketplace yet.</h1>
       }
       <CardsGrid>
         {

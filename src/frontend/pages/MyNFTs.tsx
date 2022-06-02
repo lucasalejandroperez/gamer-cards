@@ -36,6 +36,9 @@ export const MyNFTs = () => {
         );
     }
 
+    console.log('selected account: ', selectedAccount);
+    
+
     return (
         <CardsContainer
             data-aos="fade-in"
@@ -43,11 +46,15 @@ export const MyNFTs = () => {
             data-aos-easing="ease-in-out"
         >
             {
-                items.length > 0 
+                !selectedAccount
                 ?
-                <h1>My NFTs</h1>
+                    <h1>You must connect your wallet.</h1>
                 :
-                <h1>You must connect your wallet.</h1>
+                    items.length > 0 
+                    ?
+                        <h1>My NFTs</h1>
+                    :
+                        <h1>You don't have any NFT in your collection</h1>
             }
             <CardsGrid>
                 {
