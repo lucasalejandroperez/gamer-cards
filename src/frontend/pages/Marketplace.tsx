@@ -27,7 +27,11 @@ export const Marketplace = () => {
   }
 
   return (
-    <CardsContainer>
+    <CardsContainer
+      data-aos="fade-in"
+      data-aos-duration="400"
+      data-aos-easing="ease-in-out"
+    >
       {
         items.length === 0 &&
         <h1>You must connect your wallet.</h1>

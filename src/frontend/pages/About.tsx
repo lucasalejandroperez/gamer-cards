@@ -7,7 +7,11 @@ import { GenericLink, HeroContentLeft, HeroSection } from "../components/generic
 export const About = () => {
 
   return (
-    <div>
+    <div 
+      data-aos="fade-in" 
+      data-aos-duration="400"
+      data-aos-easing="ease-in-out"
+    >
       <HeroSection
         image={"../assets/images/about-image.png"} 
         backgroundSize={"709px 494px"}

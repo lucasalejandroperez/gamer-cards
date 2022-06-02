@@ -122,15 +122,13 @@ export const MenuItemLink = styled(Link)`
     text-decoration: none;
 
     &:hover {
-        /* color: ${mainTheme.darkColor}; */
-        /* background-color: ${mainTheme.lightColor}; */
         background: linear-gradient(transparent 50%, ${mainTheme.lightColor});
         border-radius: 0.5rem;
         transition: 0.5s all ease;
 
         div {
             svg {
-                fill: #23394d;
+                fill: ${mainTheme.fourthColor};
             }
         }
     }

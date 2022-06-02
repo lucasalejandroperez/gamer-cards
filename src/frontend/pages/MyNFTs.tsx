@@ -37,7 +37,11 @@ export const MyNFTs = () => {
     }
 
     return (
-        <CardsContainer>
+        <CardsContainer
+            data-aos="fade-in"
+            data-aos-duration="400"
+            data-aos-easing="ease-in-out"
+        >
             {
                 items.length > 0 
                 ?

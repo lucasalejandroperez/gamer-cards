@@ -5,6 +5,7 @@ import { create as ipfsHttpClient } from 'ipfs-http-client';
 
 import mintTeamsJson from '../mock/mintTeams.json';
 import { toWei } from '../utilities/ethereumHelper';
+import { GenericButton } from '../components/generic.elements';
 
 // TODO: Pasarlo a un .env
 const client = ipfsHttpClient({ url: 'https://ipfs.infura.io:5001/api/v0'});
@@ -33,14 +34,19 @@ export const Mint = () => {
     }
 
     return (
-        <div style={{ height: '100vh', margin: '100px 100px' }}>
-            <h1>Mintear NFTs</h1>
-            <button 
+        <div 
+            style={{ height: '100vh', margin: '100px 100px' }}
+            data-aos="fade-in"
+            data-aos-duration="400"
+            data-aos-easing="ease-in-out"
+        >
+            <h1>Mint NFTs</h1>
+            <GenericButton 
                 type="button"
                 onClick={ handleOnClick }
             >
                 Mint
-            </button>
+            </GenericButton>
         </div>
     )
 }

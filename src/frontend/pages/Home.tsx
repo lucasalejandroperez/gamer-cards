@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 import { 
   GenericButton, 
   HeroButtons, 
@@ -13,11 +15,54 @@ import {
   SingleService, 
   WellcomePromoSection 
 } from '../components/generic.elements';
+import { mainTheme } from '../styles/mainColors';
 
 export const Home = () => {
   
+  const LinkButtonAbstract = styled(Link)`
+  `;
+
+  const LinkButton = styled(LinkButtonAbstract)`
+    background-image: linear-gradient(
+        to right,
+        #21d397 0,${mainTheme.terciaryColor} 51%,${mainTheme.fourthColor}
+    );
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: ${mainTheme.contrastColor};
+    cursor: pointer;
+    margin: 10px;
+    padding: 0.85rem 2.5rem;
+    text-align:center;
+    text-decoration: none;
+    border: 2px solid ${mainTheme.terciaryColor};
+    background-size: 300% 100%;
+    border-radius: 50px;
+    -moz-transition: all .4s ease-in-out;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+
+    &:hover {
+        background-position: 100% 0;
+        -moz-transition: all .4s ease-in-out;
+        -o-transition: all .4s ease-in-out;
+        -webkit-transition: all .4s ease-in-out;
+        transition: all .4s ease-in-out;
+    }
+
+    &:focus {
+        outline: none;
+    }
+  `;
+
   return (
-    <div>
+    <div
+      data-aos="fade-in"
+      data-aos-duration="400"
+      data-aos-easing="ease-in-out"
+    >
         <HeroSection 
           image={"../assets/images/wellcome-hero-image.png"}
           justifyContent={"left"}
@@ -34,8 +79,8 @@ export const Home = () => {
             <h1>Buy NFTs of your favorites players</h1>
             <p>Find all gamers in the Valorant scene and buy the player that you want.</p>
             <HeroButtons>
-              <GenericButton>LEARN MORE</GenericButton>
-              <GenericButton>BUY NOW</GenericButton>
+              <LinkButton to="/gettingstarted">LEARN MORE</LinkButton>
+              <LinkButton to="/marketplace">BUY NOW</LinkButton>
             </HeroButtons>
           </HeroContentLeft>
         </HeroSection>
@@ -45,6 +90,9 @@ export const Home = () => {
           backgroundSize={"750px 405px"}
           imagePosition={"left"}
           justifyContent={"right"}
+          data-aos="fade-in" 
+          data-aos-duration="400"
+          data-aos-easing="ease-in-out"
         >
           <HeroContentRight>
             <h1>Sell your NFTs and make huge profits</h1>
@@ -53,8 +101,11 @@ export const Home = () => {
           </HeroContentRight>
         </HeroSection>
 
+
         <HeroSection
-          alignItems={"flex-start"}
+          data-aos="fade-in" 
+          data-aos-duration="400"
+          data-aos-easing="ease-in-out"
         >
           <HeroContentCenter>
             <h1>Earn royalties from NFT sales</h1>

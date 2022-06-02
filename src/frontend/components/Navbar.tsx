@@ -82,14 +82,6 @@ export const Navbar = () => {
                             </MenuItemLink>
                         </MenuItem>
                         <MenuItem>
-                            <MenuItemLink to="/mint" onClick={ () => setShowMobileMenu(!showMobileMenu) }>
-                                <div>
-                                    <FaHome />
-                                    MINT
-                                </div>
-                            </MenuItemLink>
-                        </MenuItem>
-                        <MenuItem>
                             <MenuItemLink to="/marketplace" onClick={ () => setShowMobileMenu(!showMobileMenu) }>
                                 <div>
                                     <FaUserAlt />
@@ -102,6 +94,14 @@ export const Navbar = () => {
                                 <div>
                                     <FaBriefcase />
                                     MY NFTS
+                                </div>
+                            </MenuItemLink>
+                        </MenuItem>
+                        <MenuItem>
+                            <MenuItemLink to="/gettingstarted" onClick={ () => setShowMobileMenu(!showMobileMenu) }>
+                                <div>
+                                    <FaHome />
+                                    GETTING STARTED
                                 </div>
                             </MenuItemLink>
                         </MenuItem>

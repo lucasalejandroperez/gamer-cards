@@ -12,6 +12,7 @@
     "@types/node": "^16.11.33",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.3",
+    "aos": "^2.3.4",
     "ipfs-http-client": "^56.0.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
@@ -51,6 +52,7 @@
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "@types/aos": "^3.0.4",
     "@types/styled-components": "^5.1.25",
     "chai": "^4.3.6",
     "ethereum-waffle": "^3.4.4",
