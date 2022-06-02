@@ -45,10 +45,6 @@ export const NFTItem = ({ itemId, nick, team, description, seller, totalPrice, l
         setPriceToSell(event.target.value);
     }
 
-    console.log(`✨✨ level del item ${itemId} - ${nick}: `, level);
-    
-    
-
     return (
         <Card 
             backgroundColorLevel={ getLevelColor(parseInt(level.toString())) }

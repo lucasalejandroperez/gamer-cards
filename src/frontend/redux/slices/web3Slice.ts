@@ -26,34 +26,23 @@ export const setWeb3HandlerAsync = createAsyncThunk(
         // The value we return becomes the `fulfilled` action payload
 
         window.ethereum.on('chainChanged', () => {
-            console.log('reloadddd');
             window.location.reload();
         });
 
         window.ethereum.on('accountsChanged', async function (accounts:string[]) {
-            //setAccount(accounts[0]) <-- esto estaba asi antes, no se si va
-            console.log('CAMBIO DE ACCOUNT: ', accounts[0]);
-            
             window.location.reload();
         });
 
         let account = await window.ethereum.selectedAddress;
-        
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        console.log('signer: ', signer);
-        console.log('account: ', account);
-        
         const selectedAccount = account?.toString().toUpperCase();
-        console.log('selectedAccount: ', selectedAccount);
         
         provider.getCode(MarketplaceAddress.address).then((res) => {
-          console.log('bytecode of marketplace address: ', res);
         });
 
         const marketplace = new ethers.Contract(MarketplaceAddress.address, MarketplaceAbi.abi, signer);
         const nft = new ethers.Contract(NFTAddress.address, NFTAbi.abi, signer);
-        console.log('llego');
         
         return {
             nft,

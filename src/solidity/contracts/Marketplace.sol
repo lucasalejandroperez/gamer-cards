@@ -175,10 +175,12 @@ contract Marketplace is ReentrancyGuard {
         if (itemCountOfPurchases[_itemId] >= 3) { // pay to diamond account (diamond fee)
             accountsLevels[_itemId].diamond.transfer(getFeePrice(feeDiamondPercent, item.price));
         }
-        else if (itemCountOfPurchases[_itemId] >= 4) { // pay to diamond and gold accounts (gold fee)
+        
+        if (itemCountOfPurchases[_itemId] >= 4) { // pay to diamond and gold accounts (gold fee)
             accountsLevels[_itemId].gold.transfer(getFeePrice(feeGoldPercent, item.price));
         }
-        else if (itemCountOfPurchases[_itemId] >= 5) { // pay to diamond, gold and silver accounts (silver fee)
+        
+        if (itemCountOfPurchases[_itemId] >= 5) { // pay to diamond, gold and silver accounts (silver fee)
             accountsLevels[_itemId].silver.transfer(getFeePrice(feeSilverPercent, item.price));
         }
         

@@ -270,7 +270,6 @@ describe('Tests of NFT contract', () => {
             
             const item = await marketplace.items(1);
             const price = await marketplace.getTotalPrice(1);
-            console.log('EL PRECIO: ', fromWei(price));
 
             await expect(item.onSale).to.equal(true);
         })
@@ -580,9 +579,9 @@ describe('Tests of NFT contract', () => {
             expect(diamondBuyerFinalEthBal).to.equal(
                             diamondBuyerInitialEthBal.add(ethers.utils.parseEther(priceSecondPurchase.toString())) // price
                                                      .add(ethers.utils.parseEther("0.03")) // + fee diamond
-                                                     .add(ethers.utils.parseEther("0.02")) // + fee gold
+                                                     .add(ethers.utils.parseEther("0.03")) // + fee diamond
                             ); 
-
+            
             expect(goldBuyerFinalEthBal).to.equal(
                             goldBuyerInitialEthBal.add(ethers.utils.parseEther(priceThirdPurchase.toString())) // price
                                                   .add(ethers.utils.parseEther("0.02")) // + fee gold
@@ -594,7 +593,7 @@ describe('Tests of NFT contract', () => {
 
             expect(await nft.ownerOf(1)).to.equal(addr6.address);
         });
-
+        
         it('Should pay seller, transfer NFT to buyer, pay five fee to marketplace and GamerOrganization and one fee to diamond, gold and silver buyers and emit Bought event', async () => {
             const marketplaceInitialEthBal = await deployer.getBalance();
             const gamerOrganizationInitialEthBal = await addr10.getBalance();
@@ -633,8 +632,6 @@ describe('Tests of NFT contract', () => {
             await expect(item.onSale).to.equal(true);
 
             const preciop1 = await marketplace.getTotalPrice(1);
-            console.log('[VER]precio del item 1:', fromWei(preciop1));
-
 
             const diamondBuyerInitialEthBal = await addr3.getBalance();
             
@@ -663,7 +660,6 @@ describe('Tests of NFT contract', () => {
                         addr4.address
                     );
             const preciop2 = await marketplace.getTotalPrice(1);
-            console.log('[VER]precio del item 2:', fromWei(preciop2));
 
             const goldBuyerInitialEthBal = await addr4.getBalance();
             
@@ -691,7 +687,6 @@ describe('Tests of NFT contract', () => {
                         addr5.address
                     );
             const preciop3 = await marketplace.getTotalPrice(1);
-            console.log('[VER]precio del item 3:', fromWei(preciop3));
             
             const silverBuyerInitialEthBal = await addr5.getBalance();
 
@@ -720,7 +715,6 @@ describe('Tests of NFT contract', () => {
                     );
             
             const preciop4 = await marketplace.getTotalPrice(1);
-            console.log('[VER]precio del item 4:', fromWei(preciop4));
             
             // // addr7 approves marketplace contract to make the action
             // await nft.connect(addr7).setApprovalForAll(marketplace.address, true);
@@ -762,14 +756,14 @@ describe('Tests of NFT contract', () => {
             expect(diamondBuyerFinalEthBal).to.equal(
                             diamondBuyerInitialEthBal.add(ethers.utils.parseEther(priceSecondPurchase.toString())) // price
                                                      .add(ethers.utils.parseEther("0.03")) // + fee diamond
-                                                     .add(ethers.utils.parseEther("0.02")) // + fee gold
-                                                     .add(ethers.utils.parseEther("0.01")) // + fee silver
+                                                     .add(ethers.utils.parseEther("0.03")) // + fee diamond
+                                                     .add(ethers.utils.parseEther("0.03")) // + fee diamond
                             ); 
 
             expect(goldBuyerFinalEthBal).to.equal(
                             goldBuyerInitialEthBal.add(ethers.utils.parseEther(priceThirdPurchase.toString())) // price
                                                   .add(ethers.utils.parseEther("0.02")) // + fee gold
-                                                  .add(ethers.utils.parseEther("0.01")) // + fee silver
+                                                  .add(ethers.utils.parseEther("0.02")) // + fee gold
                             ); 
 
             expect(silverBuyerFinalEthBal).to.equal(
@@ -964,18 +958,21 @@ describe('Tests of NFT contract', () => {
             expect(diamondBuyerFinalEthBal).to.equal(
                             diamondBuyerInitialEthBal.add(ethers.utils.parseEther(priceSecondPurchase.toString())) // price
                                                      .add(ethers.utils.parseEther("0.03")) // + fee diamond
-                                                     .add(ethers.utils.parseEther("0.02")) // + fee gold
-                                                     .add(ethers.utils.parseEther("0.01")) // + fee silver
+                                                     .add(ethers.utils.parseEther("0.03")) // + fee diamond
+                                                     .add(ethers.utils.parseEther("0.03")) // + fee diamond
+                                                     .add(ethers.utils.parseEther("0.03")) // + fee diamond
                             ); 
 
             expect(goldBuyerFinalEthBal).to.equal(
                             goldBuyerInitialEthBal.add(ethers.utils.parseEther(priceThirdPurchase.toString())) // price
                                                   .add(ethers.utils.parseEther("0.02")) // + fee gold
-                                                  .add(ethers.utils.parseEther("0.01")) // + fee silver
+                                                  .add(ethers.utils.parseEther("0.02")) // + fee gold
+                                                  .add(ethers.utils.parseEther("0.02")) // + fee gold
                             ); 
 
             expect(silverBuyerFinalEthBal).to.equal(
                             silverBuyerInitialEthBal.add(ethers.utils.parseEther(priceFourPurchase.toString())) // price
+                                                    .add(ethers.utils.parseEther("0.01")) // + fee silver
                                                     .add(ethers.utils.parseEther("0.01")) // + fee silver
                             );
 

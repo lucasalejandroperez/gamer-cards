@@ -17,22 +17,13 @@ export const getMyNFTsAsync = createAsyncThunk(
     'marketplace/getMyNFTs',
     async (parameters:any) => {
         const { marketplaceContract, nftContract, selectedAccount } = parameters;
-        
-        
         let items:IItem[] = [];
         const itemCount = await marketplaceContract.itemCount();
-        console.log('itemCount: ', itemCount.toString());
 
         for (let i = 1; i <= itemCount.toString(); i++) {
             const item:IItem = await marketplaceContract.items(i);
             
             if (item.seller.toUpperCase() === selectedAccount) {
-                // console.log('las cuentas son igualeees');
-                // console.log('item.seller ', item.seller);
-                // console.log('selectedAccount: ', selectedAccount);
-                // console.log('******');
-                // console.log('itemId: ', parseInt(item.itemId.toString()));
-                // console.log('item.');
                 const totalPrice = await marketplaceContract.getTotalPrice(item.itemId.toString());
                 const level = await marketplaceContract.itemCountOfPurchases(item.itemId.toString());
                 const uri = await nftContract.tokenURI(parseInt(item.itemId.toString()));
@@ -51,9 +42,6 @@ export const getMyNFTsAsync = createAsyncThunk(
                 })
             }
         }
-
-        console.log('items parseados: ', items);
-        
 
         return items;
     }

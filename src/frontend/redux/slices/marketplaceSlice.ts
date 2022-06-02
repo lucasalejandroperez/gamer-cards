@@ -83,8 +83,6 @@ export const setItemsAsync = createAsyncThunk(
       const { marketplaceContract, itemId, totalPrice } = parameters;
       const precioTotal = await marketplaceContract.getTotalPrice(itemId);
 
-      console.log('getTotalPrice: ', fromWei(precioTotal));
-
       await(await marketplaceContract.purchaseItem(itemId, { value: toWei(totalPrice) })).wait();
     }
   );
