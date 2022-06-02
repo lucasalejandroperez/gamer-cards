@@ -51,6 +51,11 @@ export const Navbar = () => {
             window.removeEventListener('scroll', changeNavBackgroundColor);
         }
     }, []);
+
+    const handleConnectWalletMobile = () => {
+        dispatch(setWeb3HandlerAsync());
+        setShowMobileMenu(!showMobileMenu);
+    }
     
 
     return (
@@ -73,6 +78,14 @@ export const Navbar = () => {
                         }
                     </MobileIcon>
                     <Menu open={showMobileMenu}>
+                        <MenuItem>
+                            <MenuItemLink to="#" onClick={ () => handleConnectWalletMobile() }>
+                                <div>
+                                    <FaHome />
+                                    CONNECT WALLET
+                                </div>
+                            </MenuItemLink>
+                        </MenuItem>
                         <MenuItem>
                             <MenuItemLink to="/" onClick={ () => setShowMobileMenu(!showMobileMenu) }>
                                 <div>

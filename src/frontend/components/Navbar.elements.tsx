@@ -80,6 +80,10 @@ export const Menu = styled.ul<IMenuProps>`
     justify-content: space-between;
     list-style: none;
 
+    li:first-child {
+        display: none;
+    }
+
     @media screen and (max-width: 960px) {
         background-color: #23394d;
         position: absolute;
@@ -91,6 +95,10 @@ export const Menu = styled.ul<IMenuProps>`
         flex-direction: column;
         align-items: center;
         transition: 0.5s all ease;
+
+        li:first-child {
+            display: contents;
+        }
     }
 `;
 
