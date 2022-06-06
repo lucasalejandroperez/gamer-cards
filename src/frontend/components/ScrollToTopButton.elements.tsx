@@ -41,7 +41,6 @@ export const ScrollButtonIcon = styled(FaAngleUp)`
     animation-iteration-count: infinite;
 
     &:hover {
-        animation: none;
         background: ${mainTheme.contrastColor};
         color: ${mainTheme.terciaryColor};
         border: 2px solid ${mainTheme.terciaryColor};
